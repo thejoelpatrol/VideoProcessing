@@ -8,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 	/*
-	    $ ffmpeg -i /Volumes/OrinocoFlow/raw\ video/glrenderScreenSnapz001.mov -f image2pipe -vcodec ppm pipe:1 | java -jar out/artifacts/ECBFrames_jar/ECBFrames.jar
+	    $ ffmpeg -i /Volumes/OrinocoFlow/raw\ video/glrenderScreenSnapz001.mov -f image2pipe -vcodec ppm pipe:1 | java -jar out/artifacts/PipeShift_jar/PipeShift.jar output-dir/
 	 */
         //boolean useParamWindow = (args.length == 1);
 

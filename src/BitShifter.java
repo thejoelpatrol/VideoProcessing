@@ -14,7 +14,7 @@ public class BitShifter extends ImageWorkerThread {
         byte[] rgbResult = new byte[3 * image.width * image.height];
         for (int y = 0; y < image.height; y++) {
             for (int x = 0; x < image.width; x++) {
-                int i = 3 * (x + y*image.height);
+                int i = 3 * (x + y*image.width);
                 Image.Pixel pixel = image.pixels[y][x];
                 rgbResult[i] = rotateRight(pixel.r, shift);
                 rgbResult[i+1] =  rotateRight(pixel.g, shift);
