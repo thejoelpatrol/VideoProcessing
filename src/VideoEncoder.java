@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -8,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 public class VideoEncoder extends Thread {
-    private static final String IMAGE_FORMAT = "PNG";
+    private static final String IMAGE_FORMAT = "JPG";
     private BlockingQueue<BufferedImage> images;
     private boolean keepWaiting = true;
     private String outputDir;
@@ -17,7 +18,9 @@ public class VideoEncoder extends Thread {
 
     public VideoEncoder(BlockingQueue<BufferedImage> images, String outputDir) {
         this.images = images;
-        this.outputDir = outputDir;
+        this.outputDir = outputDir + '/' + new Date().getTime() + '/';
+        File f = new File(this.outputDir);
+        f.mkdir();
     }
 
     public synchronized void run() {
@@ -27,12 +30,16 @@ public class VideoEncoder extends Thread {
                 break;
             saveImage(image);
             frame++;
+            //if (frame % 200 == 0)
+              //  System.out.println("queue size " + images.size());
         }
         System.out.println("done encoding");
     }
 
     private void saveImage(BufferedImage image) {
-        String filename = outputDir + "/frame_" + frame + '.' + IMAGE_FORMAT;
+        if (frame % 500 == 0)
+            System.out.println(new Date().toString() + ": saving frame " + frame);
+        String filename = outputDir + "frame_" + frame + '.' + IMAGE_FORMAT;
         if (filename != null) {
             try {
                 ImageIO.write(image, IMAGE_FORMAT, new File(filename));

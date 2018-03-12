@@ -42,24 +42,15 @@ WorkerManager extends Thread {
                 }
 
                 locks[i] = new Semaphore(1);
-                workerThreads[i] = new BitShifter(locks[i], image, 3); // TODO how to create different classes here later?
+                workerThreads[i] = new BitShifter(locks[i], image, Main.intParam); // TODO how to create different classes here later?
                 workerThreads[i].start();
             }
             i--;
             for (int j = 0; j < i; j++) {
 
-               // System.out.println("acquiring please .......... " + locks[i].availablePermits());
                 locks[j].acquireUninterruptibly();
-                //System.out.println("we acquired one of them " + locks[i].availablePermits());
                 putUninterruptibly(output, workerThreads[j].getfinishedImage());
             }
-            System.out.println("output queue size " + output.size());
-
-            //check = work.peek();
-            //while (check == null) {
-                /* basically spinlock, it won't be long */
-            //    check = work.peek();
-            //}
         }
 
         System.out.println("Telling the encoder we're done");
