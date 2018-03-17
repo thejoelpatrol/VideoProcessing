@@ -1,20 +1,14 @@
-import java.awt.image.BufferedImage;
-import java.util.Date;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class
 WorkerManager extends Thread {
     private BlockingQueue<Image> work;
-    private BlockingQueue<BufferedImage> output;
+    private BlockingQueue<Image> output;
     private int workers;
-    private VideoEncoder consumer;
+    private PPMWriter consumer;
 
-    public WorkerManager(BlockingQueue<Image> work, int workers, BlockingQueue<BufferedImage> output, VideoEncoder consumer) {
+    public WorkerManager(BlockingQueue<Image> work, int workers, BlockingQueue<Image> output, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
@@ -26,9 +20,7 @@ WorkerManager extends Thread {
         boolean done = false;
 
         while (work.peek() == null) { /* basically spinlock, it won't be long */ }
-        Image check = work.peek();
 
-        //while (check.height != 0 && !done) {
         while (!done) {
             ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
             Semaphore locks[] = new Semaphore[workers];
@@ -64,7 +56,7 @@ WorkerManager extends Thread {
             } catch (InterruptedException e) {}
         }
     }
-    private void putUninterruptibly(BlockingQueue queue, BufferedImage image) {
+    private void putUninterruptibly(BlockingQueue queue, Image image) {
         while (true) {
             try {
                 queue.put(image);

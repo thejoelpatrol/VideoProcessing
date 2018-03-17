@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -15,16 +16,24 @@ public class Main {
 	 */
         //boolean useParamWindow = (args.length == 1);
 
-        if (args.length != 2) {
+       /* if (args.length != 2) {
             printUsageAndExit();
-        }
+        }*/
 
-        intParam = Integer.parseInt(args[1]);
+        intParam = Integer.parseInt(args[0]);
+
+
 
         BlockingQueue<Image> images = new LinkedBlockingQueue<>(30);
-        BlockingQueue<BufferedImage> outputImages = new LinkedBlockingQueue<>(30);
+        BlockingQueue<Image> outputImages = new LinkedBlockingQueue<>(30);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
-        VideoEncoder encoder = new VideoEncoder(outputImages, args[0]);
+        PPMWriter encoder = new PPMWriter(outputImages, System.out);
+        /*PPMWriter encoder = null;
+        try {
+            encoder = new PPMWriter(outputImages, new FileOutputStream("/Volumes/Osteopathic Medicine/raw-video/bunstest.ppm"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }*/
         WorkerManager manager = new WorkerManager(images, WORKERS, outputImages, encoder);
 
         reader.start();
