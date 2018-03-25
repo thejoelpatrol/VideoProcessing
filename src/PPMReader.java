@@ -1,6 +1,7 @@
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
 public class PPMReader extends Thread {
@@ -17,12 +18,12 @@ public class PPMReader extends Thread {
 
     @Override
     public void run() {
+        PPMFile ppm = null;
         while (true) {
-            PPMFile ppm = null;
             try {
                 ppm = readPPMFile(ppm);
             } catch (EOFException e) {
-                System.out.println("read whole file");
+                System.err.println("read whole file");
                 Image sentinel = new Image(null, 0, 0);
                 putUninterruptibly(sentinel);
                 synchronized (listener) {
@@ -35,19 +36,9 @@ public class PPMReader extends Thread {
                 System.exit(1);
             }
             frames++;
-            /*if (ppm == null) {
-                System.err.println("error");
-                Image sentinel = new Image(null, 0, 0);
-                putUninterruptibly(sentinel);
-                synchronized (listener) {
-                    listener.notify();
-                }
-                return;
-            }*/
-            //System.out.println("read a ppm file");
             Image image = new Image(ppm.data, ppm.height, ppm.width);
             putUninterruptibly(image);
-
+            //System.err.println(new Date().toString() + ": read frame " + frames);
             synchronized (listener) {
                 listener.notify();
             }
@@ -64,24 +55,17 @@ public class PPMReader extends Thread {
     }
 
     private PPMFile readPPMFile(PPMFile ppmFile) throws Exception {
-        //PPMFile result = new PPMFile();
-
-        //FileReader fileReader = new FileReader(reader.getFD());
-        //long pos = reader.getChannel().position();
-        //InputStreamReader fileReader = new InputStreamReader(stream);
         InputStream fileReader = stream;
 
         String magic = "";
         char c = readChar(fileReader);
 
         if (frames == 6641)
-            System.out.println("hey");
-        //pos = reader.getChannel().position();
+            System.err.println("hey");
         while (c != '\n') {
             magic += c;
             c = readChar(fileReader);
         }
-        //pos = reader.getChannel().position();
 
         if (!magic.equals("P6"))
             throw new IOException("wrong file type -- not ppm -- no P6 magic number");
@@ -102,9 +86,6 @@ public class PPMReader extends Thread {
             ppmFile.height = height;
             ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
         }
-
-        /*result.width = Integer.parseInt(width_height[0]);
-        result.height = Integer.parseInt(width_height[1]);*/
 
         c = readChar(fileReader);
         String maxVal = "";

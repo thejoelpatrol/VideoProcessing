@@ -1,9 +1,11 @@
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +15,7 @@ import javax.imageio.ImageIO;
 
 public class PPMWriter extends Thread {
     private static final String IMAGE_FORMAT = "JPG";
-    private BlockingQueue<Image> images;
+    private BlockingQueue<PPMFile> images;
     private boolean keepWaiting = true;
 //    private String outputDir;
     private OutputStream output;
@@ -23,7 +25,7 @@ public class PPMWriter extends Thread {
     private int frame = 0;
 
 
-    public PPMWriter(BlockingQueue<Image> images, OutputStream output) {
+    public PPMWriter(BlockingQueue<PPMFile> images, OutputStream output) {
         this.images = images;
         this.output = output;
         /*this.outputDir = outputDir + '/' + new Date().getTime() + '/';
@@ -33,7 +35,7 @@ public class PPMWriter extends Thread {
 
     public synchronized void run() {
         while (images.size() > 0 || keepWaiting) {
-            Image image = takeAlmostUninterruptibly();
+            PPMFile image = takeAlmostUninterruptibly();
             if (image == null)
                 break;
             saveImage(image);
@@ -45,9 +47,7 @@ public class PPMWriter extends Thread {
         System.err.println("done encoding");
     }
 
-    private void saveImage(Image image) {
-        //if (frame % 500 == 0)
-        //    System.err.println(new Date().toString() + ": saving frame " + frame);
+    private void saveImage(PPMFile image) {
 
         if (widthHeight == null)
             widthHeight = new String(image.width + " " + image.height + '\n').getBytes(StandardCharsets.US_ASCII);
@@ -56,13 +56,9 @@ public class PPMWriter extends Thread {
             output.write(magic);
             output.write(widthHeight);
             output.write(maxVal);
-            for (Image.Pixel[] row : image.pixels) {
-                for (Image.Pixel pixel : row) {
-                    output.write(pixel.r & 0xFF);
-                    output.write(pixel.g & 0xFF);
-                    output.write(pixel.b & 0xFF);
-                }
-            }
+            output.write(image.data);
+            if (frame % 500 == 0)
+                System.err.println(new Date().toString() + ": saved frame " + frame);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,7 +78,7 @@ public class PPMWriter extends Thread {
         interrupt();
     }
 
-    private Image takeAlmostUninterruptibly() {
+    private PPMFile takeAlmostUninterruptibly() {
         while (keepWaiting) {
             try {
                 return images.take();

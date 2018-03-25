@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
-    private static final int WORKERS = 3;
+    private static final int WORKERS = 2;
 
     public static int intParam;
 
@@ -25,12 +25,12 @@ public class Main {
 
 
         BlockingQueue<Image> images = new LinkedBlockingQueue<>(30);
-        BlockingQueue<Image> outputImages = new LinkedBlockingQueue<>(30);
+        BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(30);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
         /*PPMWriter encoder = null;
         try {
-            encoder = new PPMWriter(outputImages, new FileOutputStream("/Volumes/Osteopathic Medicine/raw-video/bunstest.ppm"));
+            encoder = new PPMWriter(outputImages, new FileOutputStream("/Volumes/Osteopathic Medicine/raw-video/taebotest4.ppm"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }*/
