@@ -21,32 +21,37 @@ WorkerManager extends Thread {
 
         while (work.peek() == null) { /* basically spinlock, it won't be long */ }
 
-        int frames1 = 0;
-        int frames2 = 0;
+        ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
+        Semaphore locks[] = new Semaphore[workers];
+
         while (!done) {
-            ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
-            Semaphore locks[] = new Semaphore[workers];
             int i;
             for (i = 0; i < workers; i++) {
                 Image image = takeUninterruptibly();
-                //System.err.println("queuing frame " + frames1++);
                 if (image.height == 0) {
                     done = true;
                     System.err.println("we better be done");
                     i--;
                     break;
                 }
-
-                locks[i] = new Semaphore(1);
-                workerThreads[i] = new BitShifter(locks[i], image, Main.intParam); // TODO how to create different classes here later?
-                workerThreads[i].start();
+                if (workerThreads[i] == null) {
+                    locks[i] = new Semaphore(1);
+                    workerThreads[i] = new BitShifter(locks[i], image, Main.intParam); // TODO how to create different classes here later?
+                    workerThreads[i].start();
+                } else {
+                    workerThreads[i].setImage(image);
+                }
             }
             for (int j = 0; j < i; j++) {
-
                 locks[j].acquireUninterruptibly();
+                locks[j].release();
                 //System.err.println("queuing image " + frames2++);
                 putUninterruptibly(output, workerThreads[j].getfinishedImage());
             }
+        }
+
+        for (int i = 0; i < workers; i++) {
+            workerThreads[i].finishRunning();
         }
 
         System.err.println("Telling the encoder we're done");

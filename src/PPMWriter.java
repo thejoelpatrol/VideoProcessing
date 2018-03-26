@@ -62,15 +62,6 @@ public class PPMWriter extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /*String filename = outputDir + "frame_" + frame + '.' + IMAGE_FORMAT;
-        if (filename != null) {
-            try {
-                ImageIO.write(image, IMAGE_FORMAT, new File(filename));
-            } catch (IOException io) {
-                System.err.println("couldn't save frame " + frame);
-            }
-        }*/
     }
 
     public void done() {

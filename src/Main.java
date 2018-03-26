@@ -6,34 +6,28 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
-    private static final int WORKERS = 2;
-
+    private static final int QUEUE_SIZE = 100;
     public static int intParam;
 
     public static void main(String[] args) {
 	/*
-	    $ ffmpeg -i /Volumes/OrinocoFlow/raw\ video/glrenderScreenSnapz001.mov -f image2pipe -vcodec ppm pipe:1 | java -jar out/artifacts/PipeShift_jar/PipeShift.jar output-dir/
+	    $ ffmpeg -i /Volumes/OrinocoFlow/raw\ video/glrenderScreenSnapz001.mov -f image2pipe -vcodec ppm pipe:1 | java -jar out/artifacts/PipeShift_jar/PipeShift.jar threads# bit-shift#
 	 */
-        //boolean useParamWindow = (args.length == 1);
 
-       /* if (args.length != 2) {
+        if (args.length != 2) {
             printUsageAndExit();
-        }*/
+        }
 
-        intParam = Integer.parseInt(args[0]);
+        int WORKERS = Integer.parseInt(args[0]);
+        //System.err.println("workers " + WORKERS);
 
+        intParam = Integer.parseInt(args[1]);
 
-
-        BlockingQueue<Image> images = new LinkedBlockingQueue<>(30);
-        BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(30);
+        BlockingQueue<Image> images = new LinkedBlockingQueue<>(QUEUE_SIZE);
+        BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
-        /*PPMWriter encoder = null;
-        try {
-            encoder = new PPMWriter(outputImages, new FileOutputStream("/Volumes/Osteopathic Medicine/raw-video/taebotest4.ppm"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
+
         WorkerManager manager = new WorkerManager(images, WORKERS, outputImages, encoder);
 
         reader.start();
@@ -42,7 +36,7 @@ public class Main {
     }
 
     private static void printUsageAndExit() {
-        System.err.println("Usage: $ java -jar PipeShift.jar output-dir/ shift-amount-int");
+        System.err.println("Usage: $ java -jar PipeShift.jar threads-int shift-amount-int");
         System.exit(1);
     }
 }
