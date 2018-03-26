@@ -3,7 +3,7 @@ import java.util.concurrent.Semaphore;
 public class BitShifter extends ImageWorkerThread {
     int shift;
 
-    public BitShifter(Semaphore callWhenDone, Image image, int shift) {
+    public BitShifter(Semaphore callWhenDone, PPMFile image, int shift) {
         super(callWhenDone, image);
         this.shift = shift;
     }

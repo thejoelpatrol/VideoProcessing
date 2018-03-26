@@ -7,10 +7,10 @@ import java.util.concurrent.BlockingQueue;
 public class PPMReader extends Thread {
     private int frames = 0;
     private InputStream stream;
-    private BlockingQueue<Image> queue;
+    private BlockingQueue<PPMFile> queue;
     private Object listener;
 
-    public PPMReader(InputStream stream, BlockingQueue<Image> queue, Object listener) {
+    public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue, Object listener) {
         this.stream = stream;
         this.queue = queue;
         this.listener = listener;
@@ -21,10 +21,16 @@ public class PPMReader extends Thread {
         PPMFile ppm = null;
         while (true) {
             try {
+                //Date beforeRead = new Date();
                 ppm = readPPMFile(ppm);
+                //Date afterRead = new Date();
+                //System.err.println("reading took " + (afterRead.getTime() - beforeRead.getTime()) + " ms");
             } catch (EOFException e) {
                 System.err.println("read whole file");
-                Image sentinel = new Image(null, 0, 0);
+                PPMFile sentinel = new PPMFile();
+                sentinel.height = 0;
+                sentinel.width = 0;
+                sentinel.maxVal = 0;
                 putUninterruptibly(sentinel);
                 synchronized (listener) {
                     listener.notify();
@@ -36,8 +42,10 @@ public class PPMReader extends Thread {
                 System.exit(1);
             }
             frames++;
-            Image image = new Image(ppm.data, ppm.height, ppm.width);
-            putUninterruptibly(image);
+            //Date beforeEncode = new Date();
+            //Date afterEncode = new Date();
+            //System.err.println("encoding took " + (afterEncode.getTime() - beforeEncode.getTime()) + " ms");
+            putUninterruptibly(ppm);
             //System.err.println(new Date().toString() + ": read frame " + frames);
             synchronized (listener) {
                 listener.notify();
@@ -45,7 +53,7 @@ public class PPMReader extends Thread {
         }
     }
 
-    private void putUninterruptibly(Image image) {
+    private void putUninterruptibly(PPMFile image) {
         while (true) {
             try {
                 queue.put(image);
@@ -60,8 +68,6 @@ public class PPMReader extends Thread {
         String magic = "";
         char c = readChar(fileReader);
 
-        if (frames == 6641)
-            System.err.println("hey");
         while (c != '\n') {
             magic += c;
             c = readChar(fileReader);

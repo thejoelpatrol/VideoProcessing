@@ -3,12 +3,12 @@ import java.util.concurrent.Semaphore;
 
 public class
 WorkerManager extends Thread {
-    private BlockingQueue<Image> work;
+    private BlockingQueue<PPMFile> work;
     private BlockingQueue<PPMFile> output;
     private int workers;
     private PPMWriter consumer;
 
-    public WorkerManager(BlockingQueue<Image> work, int workers, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, int workers, BlockingQueue<PPMFile> output, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
@@ -24,10 +24,15 @@ WorkerManager extends Thread {
         ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
         Semaphore locks[] = new Semaphore[workers];
 
+        int frame = 0;
+
         while (!done) {
             int i;
             for (i = 0; i < workers; i++) {
-                Image image = takeUninterruptibly();
+                PPMFile image = takeUninterruptibly();
+                frame++;
+                //if (frame % 50 == 0)
+                //    System.err.println("input queue: " + work.size());
                 if (image.height == 0) {
                     done = true;
                     System.err.println("we better be done");
@@ -58,7 +63,7 @@ WorkerManager extends Thread {
         consumer.done();
     }
 
-    private Image takeUninterruptibly() {
+    private PPMFile takeUninterruptibly() {
         while (true) {
             try {
                 return work.take();

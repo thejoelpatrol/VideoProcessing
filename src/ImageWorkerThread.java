@@ -6,19 +6,20 @@ import java.util.concurrent.Semaphore;
 public abstract class ImageWorkerThread extends Thread {
     private Semaphore imageReady;
     private boolean keepWaiting = true;
+    protected PPMFile ppm;
     protected Image image;
     protected Image processedImage;
     protected PPMFile finishedImage;
-    protected BlockingQueue<Image> queue;
+    protected BlockingQueue<PPMFile> queue;
 
     /**
      * Call super() in your subclass, I insist.
      * @param outputReady
      * @param processThisPlease
      */
-    public ImageWorkerThread(Semaphore outputReady, Image processThisPlease) {
+    public ImageWorkerThread(Semaphore outputReady, PPMFile processThisPlease) {
         this.imageReady = outputReady;
-        queue = new ArrayBlockingQueue<Image>(1);
+        queue = new ArrayBlockingQueue<PPMFile>(1);
         queue.add(processThisPlease);
         //image = processThisPlease;
         imageReady.acquireUninterruptibly();
@@ -27,17 +28,18 @@ public abstract class ImageWorkerThread extends Thread {
     @Override
     public void run() {
         while (keepWaiting) {
-            image = takeAlmostUninterruptibly();
-            if (image == null)
+            ppm = takeAlmostUninterruptibly();
+            if (ppm == null)
                 return;
+            image = new Image(ppm.data, ppm.height, ppm.width);
             processImage();
             finishImage();
-            image = null;
+            ppm = null;
             imageReady.release();
         }
     }
 
-    private Image takeAlmostUninterruptibly() {
+    private PPMFile takeAlmostUninterruptibly() {
         while (keepWaiting) {
             try {
                 return queue.take();
@@ -68,7 +70,7 @@ public abstract class ImageWorkerThread extends Thread {
         }
     }
 
-    public void setImage(Image image) {
+    public void setImage(PPMFile image) {
         imageReady.acquireUninterruptibly();
         queue.add(image);
         finishedImage = null;

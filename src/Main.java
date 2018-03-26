@@ -23,7 +23,7 @@ public class Main {
 
         intParam = Integer.parseInt(args[1]);
 
-        BlockingQueue<Image> images = new LinkedBlockingQueue<>(QUEUE_SIZE);
+        BlockingQueue<PPMFile> images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
