@@ -24,7 +24,20 @@ public class Image {
         }
     }
 
-    public BufferedImage toBufferedImage() {
+    public Image(Pixel[] pixels, int height, int width) {
+        this.pixels = new Pixel[height][];
+        for (int i = 0; i < height; i++) {
+            this.pixels[i] = new Pixel[width];
+            for (int j = 0; j < width; j++) {
+                this.pixels[i][j] = pixels[j + i*width];
+            }
+        }
+        this.height = height;
+        this.width = width;
+    }
+
+
+        public BufferedImage toBufferedImage() {
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 //        byte[] rgbVals = new byte[3 * width * height];
         for (int i = 0; i < height; i++) {
@@ -43,9 +56,4 @@ public class Image {
         return (short)((short)0x00FF & (short)b);
     }
 
-    public class Pixel {
-        short r;
-        short g;
-        short b;
-    }
 }

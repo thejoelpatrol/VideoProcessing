@@ -11,11 +11,15 @@ public class BitShifter extends ImageWorkerThread {
     @Override
     public void processImage() {
         //Image result = new Image(image.rawRGB, image.height, image.width);
+
+        ColorDownsampler sampler = new ColorDownsampler(this.image);
+        Image image = sampler.downsample(256);
+
         byte[] rgbResult = new byte[3 * image.width * image.height];
         for (int y = 0; y < image.height; y++) {
             for (int x = 0; x < image.width; x++) {
                 int i = 3 * (x + y*image.width);
-                Image.Pixel pixel = image.pixels[y][x];
+                Pixel pixel = image.pixels[y][x];
                 rgbResult[i] = rotateRight(pixel.r, shift);
                 rgbResult[i+1] =  rotateRight(pixel.g, shift);
                 rgbResult[i+2] =  rotateRight(pixel.b, shift);

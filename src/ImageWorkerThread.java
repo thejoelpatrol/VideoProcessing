@@ -61,7 +61,7 @@ public abstract class ImageWorkerThread extends Thread {
         finishedImage.data = new byte[finishedImage.width * finishedImage.height * 3];
         for (int i = 0; i < finishedImage.height; i++) {
             for (int j = 0; j < finishedImage.width; j++) {
-                Image.Pixel pixel = processedImage.pixels[i][j];
+                Pixel pixel = processedImage.pixels[i][j];
                 int index = 3 * (j + i*finishedImage.width);
                 finishedImage.data[index] = (byte)(pixel.r & 0xFF);
                 finishedImage.data[index+1] = (byte)(pixel.g & 0xFF);
