@@ -38,7 +38,6 @@ public class ColorDownsampler {
                     closestColor = pickCloserColor(pixelColor, closestColor, selectedOutputColors[k]);
                 }
                 convertedColors[index] = closestColor;
-
             }
         }
         return convertedColors;
@@ -65,7 +64,17 @@ public class ColorDownsampler {
 
     private Pixel[] selectColors(int topColorCount) {
         int[][] colorTriples = convertRGBToTriples();
+
         int[] topXcolors = medianCut(colorTriples, topColorCount);
+
+        /*synchronized (System.err) {
+            System.err.print("top ints: ");
+            for (int x : topXcolors) {
+                System.err.print(x + ":");
+            }
+            System.err.print("\n");
+        }*/
+
         Pixel[] topColors = new Pixel[topXcolors.length];
         for (int i = 0; i < topXcolors.length; i++) {
             topColors[i] = new Pixel();
@@ -73,6 +82,7 @@ public class ColorDownsampler {
             topColors[i].g = (short)((topXcolors[i] >> 8) & 0xFF);
             topColors[i].r = (short)((topXcolors[i] >> 16) & 0xFF);
         }
+
         return topColors;
     }
 
@@ -83,9 +93,9 @@ public class ColorDownsampler {
                 int index = j + i*originalImage.pixels[i].length;
                 colorTriples[index] = new int[3];
                 Pixel pixel = originalImage.pixels[i][j];
-                colorTriples[i][0] = pixel.r;
-                colorTriples[i][1] = pixel.g;
-                colorTriples[i][2] = pixel.b;
+                colorTriples[index][0] = pixel.r;
+                colorTriples[index][1] = pixel.g;
+                colorTriples[index][2] = pixel.b;
             }
         }
         return colorTriples;
@@ -98,6 +108,20 @@ public class ColorDownsampler {
      * @return desiredColors representative average colors
      */
     private int[] medianCut(int[][] RGBTriples, int desiredColors) {
+        /*if (desiredColors == 16) {
+            synchronized (System.err) {
+                System.err.print("desiredColors: " + desiredColors + " -- ");
+                for (int i = 50; i<60; i++) {
+                    for (int x : RGBTriples[i]){
+                        System.err.print(x + ":");
+                    }
+                    System.err.print(" ");
+                }
+                System.err.print("\n");
+            }
+
+        }*/
+
         if (desiredColors == 1) {
             int average = averageColor(RGBTriples);
             int[] result = new int[1];
