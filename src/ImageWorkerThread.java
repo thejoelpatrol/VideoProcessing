@@ -71,9 +71,9 @@ public abstract class ImageWorkerThread extends Thread {
     }
 
     public void setImage(PPMFile image) {
+        finishedImage = null;
         imageReady.acquireUninterruptibly();
         queue.add(image);
-        finishedImage = null;
     }
 
 
