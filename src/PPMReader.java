@@ -22,7 +22,7 @@ public class PPMReader extends Thread {
         while (true) {
             try {
                 //Date beforeRead = new Date();
-                ppm = readPPMFile(ppm);
+                ppm = readPPMFile();
                 //Date afterRead = new Date();
                 //System.err.println("reading took " + (afterRead.getTime() - beforeRead.getTime()) + " ms");
             } catch (EOFException e) {
@@ -62,7 +62,7 @@ public class PPMReader extends Thread {
         }
     }
 
-    private PPMFile readPPMFile(PPMFile ppmFile) throws Exception {
+    private PPMFile readPPMFile() throws Exception {
         InputStream fileReader = stream;
 
         String magic = "";
@@ -85,13 +85,11 @@ public class PPMReader extends Thread {
         String[] width_height = line.split(" ");
         int width = Integer.parseInt(width_height[0]);
         int height = Integer.parseInt(width_height[1]);
-        if (ppmFile == null)
-            ppmFile = new PPMFile();
-        if (width != ppmFile.width || height != ppmFile.height) {
-            ppmFile.width = width;
-            ppmFile.height = height;
-            ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
-        }
+
+        PPMFile ppmFile = new PPMFile();
+        ppmFile.width = width;
+        ppmFile.height = height;
+        ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
 
         c = readChar(fileReader);
         String maxVal = "";
