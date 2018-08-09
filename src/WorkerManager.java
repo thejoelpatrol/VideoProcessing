@@ -3,11 +3,16 @@ import java.util.concurrent.Semaphore;
 
 public class
 WorkerManager extends Thread {
+    private static final int DEFAULT_WORKERS = 3;
     private BlockingQueue<PPMFile> work;
     private BlockingQueue<PPMFile> output;
     private int workers;
     private PPMWriter consumer;
     private ImageWorkerFactory factory;
+
+    public WorkerManager(BlockingQueue<PPMFile> work, ImageWorkerFactory factory, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+        this(work, DEFAULT_WORKERS, factory, output, consumer);
+    }
 
     public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageWorkerFactory factory, BlockingQueue<PPMFile> output, PPMWriter consumer) {
         this.work = work;

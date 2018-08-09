@@ -21,14 +21,14 @@ public class Main {
         int WORKERS = Integer.parseInt(args[0]);
         //System.err.println("workers " + WORKERS);
 
-        int intParam = Integer.parseInt(args[1]);
+        int shift = Integer.parseInt(args[1]);
 
         BlockingQueue<PPMFile> images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
 
-        BitShifterFactory factory = new BitShifterFactory(intParam, false);
+        BitShifterFactory factory = new BitShifterFactory(shift, false);
 
         WorkerManager manager = new WorkerManager(images, WORKERS, factory, outputImages, encoder);
 
