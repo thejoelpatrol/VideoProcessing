@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
     private static final int QUEUE_SIZE = 100;
-    public static int intParam;
+    //public static int intParam;
 
     public static void main(String[] args) {
 	/*
@@ -21,14 +21,14 @@ public class Main {
         int WORKERS = Integer.parseInt(args[0]);
         //System.err.println("workers " + WORKERS);
 
-        intParam = Integer.parseInt(args[1]);
+        int intParam = Integer.parseInt(args[1]);
 
         BlockingQueue<PPMFile> images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         BlockingQueue<PPMFile> outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
 
-        BitShifterFactory factory = new BitShifterFactory(false);
+        BitShifterFactory factory = new BitShifterFactory(intParam, false);
 
         WorkerManager manager = new WorkerManager(images, WORKERS, factory, outputImages, encoder);
 
