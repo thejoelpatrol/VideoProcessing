@@ -43,7 +43,7 @@ WorkerManager extends Thread {
                 }
                 if (workerThreads[i] == null) {
                     locks[i] = new Semaphore(1);
-                    workerThreads[i] = factory.create(locks[i], image, Main.intParam); // TODO how to create different classes here later?
+                    workerThreads[i] = factory.create(locks[i], image, Main.intParam);
                     workerThreads[i].start();
                 } else {
                     workerThreads[i].setImage(image);
