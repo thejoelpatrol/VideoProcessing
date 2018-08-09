@@ -12,19 +12,20 @@ public class Main {
 	/*
 	    $ ffmpeg -i /Volumes/OrinocoFlow/raw\ video/glrenderScreenSnapz001.mov -f image2pipe -vcodec ppm pipe:1 | java -jar out/artifacts/PipeShift_jar/PipeShift.jar threads# bit-shift#
 	 */
-        if (args.length != 2)
+        if (args.length != 3)
             printUsageAndExit();
 
-        int WORKERS = Integer.parseInt(args[0]);
-        int shift = Integer.parseInt(args[1]);
+        String infile = args[0];
+        int WORKERS = Integer.parseInt(args[1]);
+        int shift = Integer.parseInt(args[2]);
         BitShifterFactory factory = new BitShifterFactory(shift, false);
 
-        VideoProcessor processor = new VideoProcessor(factory, WORKERS);
+        VideoProcessor processor = new VideoProcessor(infile, factory, WORKERS);
         processor.start();
     }
 
     private static void printUsageAndExit() {
-        System.err.println("Usage: $ java -jar PipeShift.jar threads-int shift-amount-int");
+        System.err.println("Usage: $ java -jar PipeShift.jar video-filepath threads-int shift-amount-int");
         System.exit(1);
     }
 }
