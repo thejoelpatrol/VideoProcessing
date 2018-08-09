@@ -1,19 +1,26 @@
+import java.sql.Time;
+import java.util.Date;
 import java.util.concurrent.Semaphore;
 
 public class BitShifter extends ImageWorkerThread {
     int shift;
+    boolean downsample;
 
-    public BitShifter(Semaphore callWhenDone, PPMFile image, int shift) {
+    public BitShifter(Semaphore callWhenDone, PPMFile image, int shift, boolean downsample) {
         super(callWhenDone, image);
         this.shift = shift;
+        this.downsample = downsample;
     }
 
     @Override
     public void processImage() {
         //Image result = new Image(image.rawRGB, image.height, image.width);
-
-        /*ColorDownsampler sampler = new ColorDownsampler(this.image);
-        Image image = sampler.downsample(256);*/
+        Image image;
+        if (downsample) {
+            ColorDownsampler sampler = new ColorDownsampler(this.image);
+            image = sampler.downsample(16);
+        } else
+            image = this.image;
 
         byte[] rgbResult = new byte[3 * image.width * image.height];
         for (int y = 0; y < image.height; y++) {

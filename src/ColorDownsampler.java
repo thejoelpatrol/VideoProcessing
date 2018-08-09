@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 
 public class ColorDownsampler {
     private enum Channel {RED, GREEN, BLUE}
@@ -16,8 +17,21 @@ public class ColorDownsampler {
     }
 
     public Image downsample(int outputColors) {
+        Date then = new Date();
         Pixel[] commonColors = selectColors(outputColors);
+        Date now = new Date();
+        Long diff = now.getTime() - then.getTime();
+        boolean print = (now.getTime() % 20L == 0L);
+        if (print) {
+            System.err.println("selecting colors took " + diff + " ms");
+        }
+        then = new Date();
         Pixel[] modifiedColors = convertColors(commonColors);
+        now = new Date();
+        diff = now.getTime() - then.getTime();
+        if (print) {
+            System.err.println("converting colors took " + diff + " ms");
+        }
         Image result = new Image(modifiedColors, originalImage.height, originalImage.width);
         return result;
     }

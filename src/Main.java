@@ -28,7 +28,7 @@ public class Main {
         PPMReader reader = new PPMReader(System.in, images, new Object() );
         PPMWriter encoder = new PPMWriter(outputImages, System.out);
 
-        BitShifterFactory factory = new BitShifterFactory();
+        BitShifterFactory factory = new BitShifterFactory(false);
 
         WorkerManager manager = new WorkerManager(images, WORKERS, factory, outputImages, encoder);
 
