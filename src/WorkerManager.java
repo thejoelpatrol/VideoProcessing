@@ -7,12 +7,14 @@ WorkerManager extends Thread {
     private BlockingQueue<PPMFile> output;
     private int workers;
     private PPMWriter consumer;
+    private ImageWorkerFactory factory;
 
-    public WorkerManager(BlockingQueue<PPMFile> work, int workers, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageWorkerFactory factory, BlockingQueue<PPMFile> output, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
         this.consumer = consumer;
+        this.factory = factory;
     }
 
     @Override
@@ -41,7 +43,7 @@ WorkerManager extends Thread {
                 }
                 if (workerThreads[i] == null) {
                     locks[i] = new Semaphore(1);
-                    workerThreads[i] = new BitShifter(locks[i], image, Main.intParam); // TODO how to create different classes here later?
+                    workerThreads[i] = factory.create(locks[i], image, Main.intParam); // TODO how to create different classes here later?
                     workerThreads[i].start();
                 } else {
                     workerThreads[i].setImage(image);

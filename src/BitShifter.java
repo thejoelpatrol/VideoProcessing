@@ -12,8 +12,8 @@ public class BitShifter extends ImageWorkerThread {
     public void processImage() {
         //Image result = new Image(image.rawRGB, image.height, image.width);
 
-        ColorDownsampler sampler = new ColorDownsampler(this.image);
-        Image image = sampler.downsample(256);
+        /*ColorDownsampler sampler = new ColorDownsampler(this.image);
+        Image image = sampler.downsample(256);*/
 
         byte[] rgbResult = new byte[3 * image.width * image.height];
         for (int y = 0; y < image.height; y++) {
