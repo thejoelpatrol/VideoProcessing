@@ -8,12 +8,10 @@ public class PPMReader extends Thread {
     private int frames = 0;
     private InputStream stream;
     private BlockingQueue<PPMFile> queue;
-    private Object listener;
 
-    public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue, Object listener) {
+    public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue) {
         this.stream = stream;
         this.queue = queue;
-        this.listener = listener;
     }
 
     @Override
@@ -21,10 +19,7 @@ public class PPMReader extends Thread {
         PPMFile ppm = null;
         while (true) {
             try {
-                //Date beforeRead = new Date();
                 ppm = readPPMFile();
-                //Date afterRead = new Date();
-                //System.err.println("reading took " + (afterRead.getTime() - beforeRead.getTime()) + " ms");
             } catch (EOFException e) {
                 System.err.println("read whole file");
                 PPMFile sentinel = new PPMFile();
@@ -32,9 +27,6 @@ public class PPMReader extends Thread {
                 sentinel.width = 0;
                 sentinel.maxVal = 0;
                 putUninterruptibly(sentinel);
-                synchronized (listener) {
-                    listener.notify();
-                }
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -42,14 +34,7 @@ public class PPMReader extends Thread {
                 System.exit(1);
             }
             frames++;
-            //Date beforeEncode = new Date();
-            //Date afterEncode = new Date();
-            //System.err.println("encoding took " + (afterEncode.getTime() - beforeEncode.getTime()) + " ms");
             putUninterruptibly(ppm);
-            //System.err.println(new Date().toString() + ": read frame " + frames);
-            synchronized (listener) {
-                listener.notify();
-            }
         }
     }
 

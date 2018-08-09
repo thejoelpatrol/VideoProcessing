@@ -19,8 +19,8 @@ public class Main {
         int shift = Integer.parseInt(args[1]);
         BitShifterFactory factory = new BitShifterFactory(shift, false);
 
-        VideoProcessor processor = new VideoProcessor();
-        processor.start(factory, WORKERS);
+        VideoProcessor processor = new VideoProcessor(factory, WORKERS);
+        processor.start();
     }
 
     private static void printUsageAndExit() {
