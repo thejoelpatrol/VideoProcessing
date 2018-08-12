@@ -1,7 +1,4 @@
-import com.sun.crypto.provider.AESKeyGenerator;
-
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.BadPaddingException;
@@ -45,7 +42,6 @@ public class BlockCipher {
     }
 
     public byte[] encrypt(byte[] input) {
-        //cipher.update(input);
         try {
             byte[] output = cipher.doFinal(input);
             return output;

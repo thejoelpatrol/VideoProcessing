@@ -1,16 +1,13 @@
-import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 public class ImageCipher {
-    /*private byte DESKey[] = {(byte)0x35, (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x25};
-    private byte DESKey[] = {(byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};*/
     private byte DEFAULT_DESKey[] = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00};
 
     private byte DEFAULT_AESKey[] = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
@@ -47,17 +44,10 @@ public class ImageCipher {
     }
 
     public Image encryptImageData(Image clearText) {
-        /*ColorDownsampler sampler = new ColorDownsampler(clearText);
-        Image downsampled = sampler.downsample(COLORS);*/
         BufferedImage buffered = clearText.toBufferedImage();
         int[] cleartextRGB = buffered.getRGB(0, 0, clearText.width, clearText.height, null, 0, buffered.getWidth());
         byte[] cleartextBytes = convertToBytes(cleartextRGB);
         byte[] encryptedBytes = encryptBytes(cleartextBytes);
-
-        /*int[] encryptedPixels = convertToInts(encryptedBytes);
-        BufferedImage encryptedImage = new BufferedImage(clearText.width, clearText.height, BufferedImage.TYPE_INT_RGB);
-        encryptedImage.setRGB(0, 0, encryptedImage.getWidth(), encryptedImage.getHeight(), encryptedPixels, 0, encryptedImage.getWidth());*/
-
         Image encryptedImage = new Image(encryptedBytes, clearText.height, clearText.width);
         return encryptedImage;
     }
@@ -97,8 +87,6 @@ public class ImageCipher {
     }
 
     private byte[] encryptBytes(byte[] clearText) {
-        //BlockCipher cipher = new BlockCipher(BlockCipher.cipherChoice.DES, DESKey);
-        //BlockCipher cipher = new BlockCipher(BlockCipher.cipherChoice.AES, AESKey);
         byte[] encryptedBytes = cipher.encrypt(clearText);
         return encryptedBytes;
     }
