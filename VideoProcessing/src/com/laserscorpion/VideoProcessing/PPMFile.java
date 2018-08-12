@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing;
+
 public class PPMFile {
     public int width;
     public int height;

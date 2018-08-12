@@ -1,7 +1,6 @@
-import com.sun.prism.ReadbackGraphics;
+package com.laserscorpion.VideoProcessing;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;

@@ -1,19 +1,12 @@
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+package com.laserscorpion.VideoProcessing;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
-
-public class PPMWriter extends Thread {
+class PPMWriter extends Thread {
     private static final String IMAGE_FORMAT = "JPG";
     private BlockingQueue<PPMFile> images;
     private boolean keepWaiting = true;

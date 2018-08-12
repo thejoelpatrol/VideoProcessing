@@ -1,7 +1,9 @@
+package com.laserscorpion.VideoProcessing;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
-public class
+class
 WorkerManager extends Thread {
     private static final int DEFAULT_WORKERS = 3;
     private BlockingQueue<PPMFile> work;

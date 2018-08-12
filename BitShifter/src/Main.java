@@ -1,9 +1,4 @@
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import com.laserscorpion.VideoProcessing.VideoProcessor;
 
 public class Main {
     //public static int intParam;

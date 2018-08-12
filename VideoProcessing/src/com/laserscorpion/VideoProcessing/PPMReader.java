@@ -1,10 +1,11 @@
+package com.laserscorpion.VideoProcessing;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
-public class PPMReader extends Thread {
+class PPMReader extends Thread {
     private int frames = 0;
     private InputStream stream;
     private BlockingQueue<PPMFile> queue;

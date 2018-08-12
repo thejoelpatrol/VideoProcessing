@@ -1,5 +1,9 @@
-import java.sql.Time;
-import java.util.Date;
+import com.laserscorpion.VideoProcessing.ColorDownsampler;
+import com.laserscorpion.VideoProcessing.Image;
+import com.laserscorpion.VideoProcessing.ImageWorkerThread;
+import com.laserscorpion.VideoProcessing.PPMFile;
+import com.laserscorpion.VideoProcessing.Pixel;
+
 import java.util.concurrent.Semaphore;
 
 public class BitShifter extends ImageWorkerThread {
@@ -14,7 +18,6 @@ public class BitShifter extends ImageWorkerThread {
 
     @Override
     public void processImage() {
-        //Image result = new Image(image.rawRGB, image.height, image.width);
         Image image;
         if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(this.image);

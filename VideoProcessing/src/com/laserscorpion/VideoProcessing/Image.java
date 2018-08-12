@@ -1,5 +1,5 @@
-import java.lang.management.BufferPoolMXBean;
-import java.util.Arrays;
+package com.laserscorpion.VideoProcessing;
+
 import java.awt.image.BufferedImage;
 
 public class Image {

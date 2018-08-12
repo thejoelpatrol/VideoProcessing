@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing;
+
 import java.util.concurrent.Semaphore;
 
 public interface ImageWorkerFactory {

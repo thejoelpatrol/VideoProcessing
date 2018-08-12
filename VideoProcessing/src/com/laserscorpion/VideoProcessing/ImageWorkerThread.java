@@ -1,4 +1,5 @@
-import java.awt.image.BufferedImage;
+package com.laserscorpion.VideoProcessing;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
