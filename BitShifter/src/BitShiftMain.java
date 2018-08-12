@@ -1,6 +1,6 @@
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 
-public class Main {
+public class BitShiftMain {
     //public static int intParam;
 
     public static void main(String[] args) {
