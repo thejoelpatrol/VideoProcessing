@@ -17,7 +17,7 @@ public class BitShifter extends ImageWorkerThread {
     }
 
     @Override
-    public void processImage() {
+    public Image processImage() {
         Image image;
         if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(this.image);
@@ -35,7 +35,7 @@ public class BitShifter extends ImageWorkerThread {
                 rgbResult[i+2] =  rotateRight(pixel.b, shift);
             }
         }
-        processedImage = new Image(rgbResult, image.height, image.width);
+        return new Image(rgbResult, image.height, image.width);
     }
 
     private byte rotateRight(short orig, int digits) {

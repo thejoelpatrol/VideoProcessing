@@ -33,7 +33,7 @@ public abstract class ImageWorkerThread extends Thread {
             if (ppm == null)
                 return;
             image = new Image(ppm.data, ppm.height, ppm.width);
-            processImage();
+            processedImage = processImage();
             finishImage();
             ppm = null;
             imageReady.release();
@@ -78,7 +78,7 @@ public abstract class ImageWorkerThread extends Thread {
     }
 
 
-    public abstract void processImage();
+    public abstract Image processImage();
 
     public PPMFile getfinishedImage() {
         //if (processedImage == null)

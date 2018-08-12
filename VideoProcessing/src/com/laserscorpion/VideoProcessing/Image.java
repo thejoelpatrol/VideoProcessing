@@ -2,6 +2,8 @@ package com.laserscorpion.VideoProcessing;
 
 import java.awt.image.BufferedImage;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 public class Image {
     public Pixel[][] pixels;
     public int height;
@@ -36,8 +38,12 @@ public class Image {
         this.width = width;
     }
 
+    public Image(BufferedImage image) {
+        throw new NotImplementedException(); // this is not a great thing to do...should probably just create a new exception type
+        //Image(image.getRGB())
+    }
 
-        public BufferedImage toBufferedImage() {
+    public BufferedImage toBufferedImage() {
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
