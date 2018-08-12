@@ -37,11 +37,6 @@ public class ColorDownsampler {
     }
 
     private Pixel[] convertColors(Pixel[] selectedOutputColors) {
-        /*Pixel[] possibleColors = new Pixel[selectedOutputColors.length];
-        for (int i = 0; i < selectedOutputColors.length; i++) {
-            possibleColors[i] = selectedOutputColors[i];
-        }*/
-
         Pixel[] convertedColors = new Pixel[originalImage.height * originalImage.width];
         for (int i = 0; i < originalImage.height; i++) {
             for (int j = 0; j < originalImage.width; j++) {

@@ -39,7 +39,6 @@ public class Image {
 
         public BufferedImage toBufferedImage() {
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//        byte[] rgbVals = new byte[3 * width * height];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int color = 0;
