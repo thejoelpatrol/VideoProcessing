@@ -18,9 +18,12 @@ public class VideoCipher extends ImageWorkerThread {
 
     @Override
     public Image processImage() {
-        ColorDownsampler sampler = new ColorDownsampler(image);
-        Image downsampled = sampler.downsample(COLORS);
+        Image toProcess = image;
+        if (downsample) {
+            ColorDownsampler sampler = new ColorDownsampler(image);
+            toProcess = sampler.downsample(COLORS);
+        }
         ImageCipher cipher = new ImageCipher();
-        return cipher.encryptImageData(downsampled);
+        return cipher.encryptImageData(toProcess);
     }
 }

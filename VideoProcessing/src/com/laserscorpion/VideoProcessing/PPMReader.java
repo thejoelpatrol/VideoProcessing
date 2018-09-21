@@ -35,6 +35,8 @@ class PPMReader extends Thread {
                 System.exit(1);
             }
             frames++;
+            if (frames % 200 == 0)
+                System.err.println("input queue size " + queue.size());
             putUninterruptibly(ppm);
         }
     }

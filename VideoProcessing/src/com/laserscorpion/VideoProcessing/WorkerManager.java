@@ -39,6 +39,7 @@ WorkerManager extends Thread {
             int i;
             for (i = 0; i < workers; i++) {
                 PPMFile image = takeUninterruptibly();
+                //System.err.println("input length " + image.data.length);
                 frame++;
                 //if (frame % 50 == 0)
                 //    System.err.println("input queue: " + work.size());
@@ -83,6 +84,7 @@ WorkerManager extends Thread {
         while (true) {
             try {
                 queue.put(image);
+                //System.err.println("output length " + image.data.length);
                 return;
             } catch (InterruptedException e) {}
         }

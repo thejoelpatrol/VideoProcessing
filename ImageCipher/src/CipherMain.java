@@ -9,7 +9,7 @@ public class CipherMain {
         int WORKERS = Integer.parseInt(args[1]);
         VideoCipherFactory factory = new VideoCipherFactory(true);
 
-        VideoProcessor processor = new VideoProcessor(infile, factory, WORKERS);
+        VideoProcessor processor = new VideoProcessor(infile, factory, WORKERS, true);
         processor.start();
     }
 
