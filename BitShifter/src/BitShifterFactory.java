@@ -14,7 +14,7 @@ public class BitShifterFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock, PPMFile image) {
-        return new BitShifter(lock, image, shift, downsample);
+    public ImageWorkerThread create(Semaphore lock) {
+        return new BitShifter(lock, shift, downsample);
     }
 }

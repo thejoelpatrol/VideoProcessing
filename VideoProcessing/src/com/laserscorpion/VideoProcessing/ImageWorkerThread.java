@@ -11,19 +11,15 @@ public abstract class ImageWorkerThread extends Thread {
     protected Image image;
     protected Image processedImage;
     protected PPMFile finishedImage;
-    protected BlockingQueue<PPMFile> queue;
+    protected BlockingQueue<PPMFile> queue; // this queue only ever has max one thing in it, but it's good for synchronization
 
     /**
      * Call super() in your subclass, I insist.
      * @param outputReady
-     * @param processThisPlease
      */
-    public ImageWorkerThread(Semaphore outputReady, PPMFile processThisPlease) {
+    public ImageWorkerThread(Semaphore outputReady) {
         this.imageReady = outputReady;
         queue = new ArrayBlockingQueue<PPMFile>(1);
-        queue.add(processThisPlease);
-        //image = processThisPlease;
-        imageReady.acquireUninterruptibly();
     }
 
     @Override

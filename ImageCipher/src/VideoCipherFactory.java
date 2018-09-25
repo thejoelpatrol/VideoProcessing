@@ -12,7 +12,7 @@ public class VideoCipherFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock, PPMFile image) {
-        return new VideoCipher(lock, image, downsample);
+    public ImageWorkerThread create(Semaphore lock) {
+        return new VideoCipher(lock, downsample);
     }
 }

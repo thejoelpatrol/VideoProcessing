@@ -13,8 +13,8 @@ public class SampleShuffler extends ImageWorkerThread {
     private int maxSampleHeight;
     private double glitchProbability;
 
-    public SampleShuffler(Semaphore callWhenDone, PPMFile image, int samples, boolean snap, int maxSampleHeight, double glitchProbability) {
-        super(callWhenDone, image);
+    public SampleShuffler(Semaphore callWhenDone, int samples, boolean snap, int maxSampleHeight, double glitchProbability) {
+        super(callWhenDone);
         //random = new Random(SEED);
         random = new Random();
         this.samples = samples;

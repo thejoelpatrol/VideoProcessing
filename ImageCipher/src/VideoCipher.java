@@ -11,8 +11,8 @@ public class VideoCipher extends ImageWorkerThread {
 
     boolean downsample;
 
-    public VideoCipher(Semaphore outputReady, PPMFile processThisPlease, boolean downsample) {
-        super(outputReady, processThisPlease);
+    public VideoCipher(Semaphore outputReady, boolean downsample) {
+        super(outputReady);
         this.downsample = downsample;
     }
 

@@ -1,5 +1,7 @@
 package com.laserscorpion.VideoProcessing;
 
+import org.omg.PortableServer.THREAD_POLICY_ID;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -33,16 +35,10 @@ WorkerManager extends Thread {
         ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
         Semaphore locks[] = new Semaphore[workers];
 
-        int frame = 0;
-
         while (!done) {
             int i;
             for (i = 0; i < workers; i++) {
-                PPMFile image = takeUninterruptibly();
-                //System.err.println("input length " + image.data.length);
-                frame++;
-                //if (frame % 50 == 0)
-                //    System.err.println("input queue: " + work.size());
+                PPMFile image = takeUninterruptibly(work);
                 if (image.height == 0) {
                     done = true;
                     System.err.println("we better be done");
@@ -51,16 +47,14 @@ WorkerManager extends Thread {
                 }
                 if (workerThreads[i] == null) {
                     locks[i] = new Semaphore(1);
-                    workerThreads[i] = factory.create(locks[i], image);
+                    workerThreads[i] = factory.create(locks[i]);
                     workerThreads[i].start();
-                } else {
-                    workerThreads[i].setImage(image);
                 }
+                workerThreads[i].setImage(image);
             }
             for (int j = 0; j < i; j++) {
                 locks[j].acquireUninterruptibly();
                 locks[j].release();
-                //System.err.println("queuing image " + frames2++);
                 putUninterruptibly(output, workerThreads[j].getfinishedImage());
             }
         }
@@ -73,10 +67,10 @@ WorkerManager extends Thread {
         consumer.done();
     }
 
-    private PPMFile takeUninterruptibly() {
+    private PPMFile takeUninterruptibly(BlockingQueue<PPMFile> queue) {
         while (true) {
             try {
-                return work.take();
+                return queue.take();
             } catch (InterruptedException e) {}
         }
     }
@@ -84,11 +78,21 @@ WorkerManager extends Thread {
         while (true) {
             try {
                 queue.put(image);
-                //System.err.println("output length " + image.data.length);
                 return;
             } catch (InterruptedException e) {}
         }
     }
 
+    private class StageManager extends Thread {
+        private BlockingQueue<PPMFile> in;
+        private BlockingQueue<PPMFile> out;
 
+        public StageManager(BlockingQueue<PPMFile> in, BlockingQueue<PPMFile> out) {
+
+        }
+
+        public void run() {
+
+        }
+    }
 }

@@ -10,8 +10,8 @@ public class BitShifter extends ImageWorkerThread {
     int shift;
     boolean downsample;
 
-    public BitShifter(Semaphore callWhenDone, PPMFile image, int shift, boolean downsample) {
-        super(callWhenDone, image);
+    public BitShifter(Semaphore callWhenDone, int shift, boolean downsample) {
+        super(callWhenDone);
         this.shift = shift;
         this.downsample = downsample;
     }

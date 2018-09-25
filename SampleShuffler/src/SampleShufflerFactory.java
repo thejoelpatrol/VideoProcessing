@@ -19,7 +19,7 @@ public class SampleShufflerFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock, PPMFile image) {
-        return new SampleShuffler(lock, image, samples, snap, maxSampleHeight, glitchProbability);
+    public ImageWorkerThread create(Semaphore lock) {
+        return new SampleShuffler(lock, samples, snap, maxSampleHeight, glitchProbability);
     }
 }
