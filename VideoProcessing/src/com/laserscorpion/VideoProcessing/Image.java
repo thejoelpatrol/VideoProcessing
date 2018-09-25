@@ -1,6 +1,7 @@
 package com.laserscorpion.VideoProcessing;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -36,6 +37,34 @@ public class Image {
         }
         this.height = height;
         this.width = width;
+    }
+
+    public Image(Image copy) {
+        height = copy.height;
+        width = copy.width;
+        pixels = new Pixel[height][width];
+        for (int i = 0; i < height; i++) {
+            pixels[i] = copyOf(copy.pixels[i]);
+        }
+    }
+
+    private Pixel[] copyOf(Pixel[] pixels) {
+        Pixel[] result = new Pixel[pixels.length];
+        for (int i = 0; i < pixels.length; i++) {
+            result[i] = pixels[i];
+        }
+        return result;
+    }
+
+    public void replaceSample(Image subImage, int xOffset, int yOffset) {
+        for (int y = 0; y < subImage.height; y++) {
+            for (int x = 0; x < subImage.width; x++) {
+                int xLoc = x + xOffset;
+                int yLoc = y + yOffset;
+                if (xLoc < width && yLoc < height)
+                    pixels[yLoc][xLoc] = subImage.pixels[y][x];
+            }
+        }
     }
 
     public Image(BufferedImage image) {
