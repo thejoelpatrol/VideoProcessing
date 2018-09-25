@@ -1,11 +1,8 @@
-import com.laserscorpion.VideoProcessing.ImageWorkerFactory;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
-
-import java.util.concurrent.Semaphore;
+import com.laserscorpion.VideoProcessing.ImageFilter;
+import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 
 
-public class SampleShufflerFactory implements ImageWorkerFactory {
+public class SampleShufflerFactory implements ImageFilterFactory {
     private int samples;
     private boolean snap;
     private int maxSampleHeight;
@@ -19,7 +16,7 @@ public class SampleShufflerFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock) {
-        return new SampleShuffler(lock, samples, snap, maxSampleHeight, glitchProbability);
+    public ImageFilter create() {
+        return new SampleShuffler(samples, snap, maxSampleHeight, glitchProbability);
     }
 }

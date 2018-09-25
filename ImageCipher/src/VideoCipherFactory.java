@@ -1,10 +1,7 @@
-import com.laserscorpion.VideoProcessing.ImageWorkerFactory;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
+import com.laserscorpion.VideoProcessing.ImageFilter;
+import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 
-import java.util.concurrent.Semaphore;
-
-public class VideoCipherFactory implements ImageWorkerFactory {
+public class VideoCipherFactory implements ImageFilterFactory {
     private boolean downsample;
 
     public VideoCipherFactory(boolean downsample) {
@@ -12,7 +9,7 @@ public class VideoCipherFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock) {
-        return new VideoCipher(lock, downsample);
+    public ImageFilter create() {
+        return new VideoCipher(downsample);
     }
 }

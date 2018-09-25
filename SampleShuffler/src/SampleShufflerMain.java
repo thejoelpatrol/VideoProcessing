@@ -1,3 +1,4 @@
+import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 
 public class SampleShufflerMain {
@@ -13,7 +14,8 @@ public class SampleShufflerMain {
         double glitchProbability = Double.parseDouble(args[5]);
         SampleShufflerFactory factory = new SampleShufflerFactory(samples, snap, maxSampleHeight, glitchProbability);
 
-        VideoProcessor processor = new VideoProcessor(infile, factory, WORKERS);
+        ImageFilterFactory[] factories = { factory };
+        VideoProcessor processor = new VideoProcessor(infile, factories, WORKERS);
         processor.start();
     }
 

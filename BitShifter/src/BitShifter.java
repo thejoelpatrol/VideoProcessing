@@ -1,41 +1,41 @@
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
+import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.ImageWorkerThread;
 import com.laserscorpion.VideoProcessing.PPMFile;
 import com.laserscorpion.VideoProcessing.Pixel;
 
 import java.util.concurrent.Semaphore;
 
-public class BitShifter extends ImageWorkerThread {
+public class BitShifter implements ImageFilter{
     int shift;
     boolean downsample;
 
-    public BitShifter(Semaphore callWhenDone, int shift, boolean downsample) {
-        super(callWhenDone);
+    public BitShifter(int shift, boolean downsample) {
         this.shift = shift;
         this.downsample = downsample;
     }
 
     @Override
-    public Image processImage() {
-        Image image;
+    public Image processImage(Image image) {
+        Image toProcess;
         if (downsample) {
-            ColorDownsampler sampler = new ColorDownsampler(this.image);
-            image = sampler.downsample(16);
+            ColorDownsampler sampler = new ColorDownsampler(image);
+            toProcess = sampler.downsample(16);
         } else
-            image = this.image;
+            toProcess = image;
 
-        byte[] rgbResult = new byte[3 * image.width * image.height];
-        for (int y = 0; y < image.height; y++) {
-            for (int x = 0; x < image.width; x++) {
-                int i = 3 * (x + y*image.width);
-                Pixel pixel = image.pixels[y][x];
+        byte[] rgbResult = new byte[3 * toProcess.width * toProcess.height];
+        for (int y = 0; y < toProcess.height; y++) {
+            for (int x = 0; x < toProcess.width; x++) {
+                int i = 3 * (x + y*toProcess.width);
+                Pixel pixel = toProcess.pixels[y][x];
                 rgbResult[i] = rotateRight(pixel.r, shift);
                 rgbResult[i+1] =  rotateRight(pixel.g, shift);
                 rgbResult[i+2] =  rotateRight(pixel.b, shift);
             }
         }
-        return new Image(rgbResult, image.height, image.width);
+        return new Image(rgbResult, toProcess.height, toProcess.width);
     }
 
     private byte rotateRight(short orig, int digits) {

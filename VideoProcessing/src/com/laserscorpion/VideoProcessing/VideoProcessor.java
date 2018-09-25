@@ -13,7 +13,7 @@ public class VideoProcessor {
 
     private BlockingQueue<PPMFile> images;
     private BlockingQueue<PPMFile> outputImages;
-    private ImageWorkerFactory factory;
+    private ImageFilterFactory[] factories;
     private int workers;
 
     private PPMReader reader;
@@ -25,13 +25,13 @@ public class VideoProcessor {
     Process input;
     Process output;
 
-    public VideoProcessor(String inputFilepath, ImageWorkerFactory factory, int workers) {
-        this(inputFilepath, factory, workers, false);
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, int workers) {
+        this(inputFilepath, factories, workers, false);
     }
 
-    public VideoProcessor(String inputFilepath, ImageWorkerFactory factory, int workers, boolean scale2x) {
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, int workers, boolean scale2x) {
         this.workers = workers;
-        this.factory = factory;
+        this.factories = factories;
 
         images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
@@ -61,7 +61,7 @@ public class VideoProcessor {
 
         reader = new PPMReader(input.getInputStream(), images);
         encoder = new PPMWriter(outputImages, output.getOutputStream());
-        manager = new WorkerManager(images, workers, factory, outputImages, encoder);
+        manager = new WorkerManager(images, workers, factories, outputImages, encoder);
 
         reader.start();
         manager.start();

@@ -1,10 +1,7 @@
-import com.laserscorpion.VideoProcessing.ImageWorkerFactory;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
+import com.laserscorpion.VideoProcessing.ImageFilter;
+import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 
-import java.util.concurrent.Semaphore;
-
-public class BitShifterFactory implements ImageWorkerFactory {
+public class BitShifterFactory implements ImageFilterFactory {
     private boolean downsample;
     private int shift;
 
@@ -14,7 +11,7 @@ public class BitShifterFactory implements ImageWorkerFactory {
     }
 
     @Override
-    public ImageWorkerThread create(Semaphore lock) {
-        return new BitShifter(lock, shift, downsample);
+    public ImageFilter create() {
+        return new BitShifter(shift, downsample);
     }
 }

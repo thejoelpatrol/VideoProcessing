@@ -1,20 +1,18 @@
 import com.laserscorpion.VideoProcessing.Image;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
+import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 
-public class SampleShuffler extends ImageWorkerThread {
+public class SampleShuffler implements ImageFilter {
     //private static final long SEED = 25;
     private Random random;
     private int samples;
     private boolean snap;
     private int maxSampleHeight;
     private double glitchProbability;
+    private Image image;
 
-    public SampleShuffler(Semaphore callWhenDone, int samples, boolean snap, int maxSampleHeight, double glitchProbability) {
-        super(callWhenDone);
+    public SampleShuffler(int samples, boolean snap, int maxSampleHeight, double glitchProbability) {
         //random = new Random(SEED);
         random = new Random();
         this.samples = samples;
@@ -24,7 +22,8 @@ public class SampleShuffler extends ImageWorkerThread {
     }
 
     @Override
-    public Image processImage() {
+    public Image processImage(Image image) {
+        this.image = image;
         if (glitchFrame())
             return selectAndPlaceSamples();
         return image;

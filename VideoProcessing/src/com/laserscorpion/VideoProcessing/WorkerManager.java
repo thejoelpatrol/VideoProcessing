@@ -1,7 +1,5 @@
 package com.laserscorpion.VideoProcessing;
 
-import org.omg.PortableServer.THREAD_POLICY_ID;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -12,18 +10,29 @@ WorkerManager extends Thread {
     private BlockingQueue<PPMFile> output;
     private int workers;
     private PPMWriter consumer;
-    private ImageWorkerFactory factory;
+    private ImageWorkerThread workerThreads[];
+    private Semaphore locks[];
 
-    public WorkerManager(BlockingQueue<PPMFile> work, ImageWorkerFactory factory, BlockingQueue<PPMFile> output, PPMWriter consumer) {
-        this(work, DEFAULT_WORKERS, factory, output, consumer);
+    public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+        this(work, DEFAULT_WORKERS, factories, output, consumer);
     }
 
-    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageWorkerFactory factory, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
         this.consumer = consumer;
-        this.factory = factory;
+
+        workerThreads = new ImageWorkerThread[workers];
+        locks = new Semaphore[workers];
+        for (int i = 0; i < workers; i++) {
+            locks[i] = new Semaphore(1);
+            ImageFilter[] filters = new ImageFilter[factories.length];
+            for (int j = 0; j < filters.length; j++) {
+                filters[j] = factories[j].create();
+            }
+            workerThreads[i] = new ImageWorkerThread(filters, locks[i]);
+        }
     }
 
     @Override
@@ -32,8 +41,9 @@ WorkerManager extends Thread {
 
         while (work.peek() == null) { /* basically spinlock, it won't be long */ }
 
-        ImageWorkerThread workerThreads[] = new ImageWorkerThread[workers];
-        Semaphore locks[] = new Semaphore[workers];
+        for (int i = 0; i < workers; i++) {
+            workerThreads[i].start();
+        }
 
         while (!done) {
             int i;
@@ -44,11 +54,6 @@ WorkerManager extends Thread {
                     System.err.println("we better be done");
                     i--;
                     break;
-                }
-                if (workerThreads[i] == null) {
-                    locks[i] = new Semaphore(1);
-                    workerThreads[i] = factory.create(locks[i]);
-                    workerThreads[i].start();
                 }
                 workerThreads[i].setImage(image);
             }
@@ -80,19 +85,6 @@ WorkerManager extends Thread {
                 queue.put(image);
                 return;
             } catch (InterruptedException e) {}
-        }
-    }
-
-    private class StageManager extends Thread {
-        private BlockingQueue<PPMFile> in;
-        private BlockingQueue<PPMFile> out;
-
-        public StageManager(BlockingQueue<PPMFile> in, BlockingQueue<PPMFile> out) {
-
-        }
-
-        public void run() {
-
         }
     }
 }

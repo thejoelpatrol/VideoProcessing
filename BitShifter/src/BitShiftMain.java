@@ -1,3 +1,4 @@
+import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 
 public class BitShiftMain {
@@ -15,7 +16,8 @@ public class BitShiftMain {
         int shift = Integer.parseInt(args[2]);
         BitShifterFactory factory = new BitShifterFactory(shift, false);
 
-        VideoProcessor processor = new VideoProcessor(infile, factory, WORKERS);
+        ImageFilterFactory[] factories = { factory };
+        VideoProcessor processor = new VideoProcessor(infile, factories, WORKERS);
         processor.start();
     }
 
