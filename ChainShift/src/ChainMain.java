@@ -9,13 +9,14 @@ public class ChainMain {
 
         String infile = args[0];
         int WORKERS = Integer.parseInt(args[1]);
+        boolean scale2x = Boolean.parseBoolean(args[2]);
         BitShifterFactory factory1 = new BitShifterFactory(5, false);
-        SampleShufflerFactory factory2 = new SampleShufflerFactory(10, false, 600, 0.5);
+        HSVFactory factory2 = new HSVFactory();
 
         ImageFilterFactory[] factories = new ImageFilterFactory[2];
-        factories[0] = factory1;
-        factories[1] = factory2;
-        VideoProcessor processor = new VideoProcessor(infile, factories, WORKERS, true);
+        factories[0] = factory2;
+        factories[1] = factory1;
+        VideoProcessor processor = new VideoProcessor(infile, factories, WORKERS, scale2x);
         processor.start();
     }
 
