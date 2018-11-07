@@ -1,14 +1,16 @@
 package com.laserscorpion.VideoProcessing;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class VideoProcessor {
-    private static String ffmpegArgs = " -f image2pipe -vcodec ppm pipe:1 ";
-    private static final String ffmpegScale = " -vf scale=2*iw:2*ih ";
-    private static final String ffmpegOutputArgs = "-framerate 30 -i pipe:0 -c:v libx264 -r 30 -crf 25 -pix_fmt yuv420p ";
+    private static String ffmpegArgs = "-f image2pipe -vcodec ppm pipe:1";
+    private static final String ffmpegScale = "-vf scale=2*iw:2*ih";
+    private static final String ffmpegOutputArgs = "-framerate 30 -i pipe:0 -c:v libx264 -r 30 -crf 25 -pix_fmt yuv420p";
     protected int QUEUE_SIZE = 100;
 
     private BlockingQueue<PPMFile> images;
@@ -36,14 +38,26 @@ public class VideoProcessor {
         images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
 
-        String inputCommand = "ffmpeg -i " + inputFilepath + (scale2x ? ffmpegScale : "") +  ffmpegArgs;
-        String outputCommand = "ffmpeg " + ffmpegOutputArgs + inputFilepath + "_" + new Date().getTime() + ".mp4";
-        inputCommand = inputCommand.replace("  ", " ");
-        outputCommand = outputCommand.replace("  ", " ");
-        System.out.println("Going to run " + inputCommand);
-        System.out.println("Going to run " + outputCommand);
-        String[] inArgs = inputCommand.split(" ");
-        String[] outArgs = outputCommand.split(" ");
+        ArrayList<String> inArgsList = new ArrayList<>();
+        inArgsList.add("ffmpeg");
+        inArgsList.add("-i");
+        inArgsList.add(inputFilepath);
+        if (scale2x)
+            inArgsList.addAll(Arrays.asList(ffmpegScale.split(" ")));
+        inArgsList.addAll(Arrays.asList(ffmpegArgs.split(" ")));
+        String[] inArgs = new String[inArgsList.size()];
+        inArgs = inArgsList.toArray(inArgs);
+
+        ArrayList<String> outArgsList = new ArrayList<>();
+        outArgsList.add("ffmpeg");
+        outArgsList.addAll(Arrays.asList(ffmpegOutputArgs.split(" ")));
+        outArgsList.add(inputFilepath + "_" + new Date().getTime() + ".mp4");
+        String[] outArgs = new String[outArgsList.size()];
+        outArgs = outArgsList.toArray(outArgs);
+
+        System.out.println("Going to run " + Arrays.toString(inArgs));
+        System.out.println("Going to run " + Arrays.toString(outArgs));
+
         inputFfmpeg = new ProcessBuilder(inArgs);
         inputFfmpeg.redirectError(ProcessBuilder.Redirect.INHERIT);
         outputFfmpeg = new ProcessBuilder(outArgs);
