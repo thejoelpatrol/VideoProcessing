@@ -1,0 +1,1 @@
+In-progress video processing framework to work with raw RGB frames of video for glitching etc. ffmpeg decodes and encodes the video, and you can focus just on adding small bits of code to manipulate the pixels of each frame. Benefits from many cores by processing each decoded frame in a separate thread.
