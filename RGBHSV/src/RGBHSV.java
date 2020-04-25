@@ -1,4 +1,3 @@
-import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
@@ -13,7 +12,7 @@ public class RGBHSV implements ImageFilter {
     }*/
 
     @Override
-    public Image processImage(Image image) {
+    public Image processImage(Image image, int frameNo) {
         byte[] rgbResult = new byte[3 * image.width * image.height];
 
         for (int y = 0; y < image.height; y++) {

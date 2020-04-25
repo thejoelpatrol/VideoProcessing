@@ -1,5 +1,5 @@
 package com.laserscorpion.VideoProcessing;
 
 public interface ImageFilter {
-    Image processImage(Image image);
+    Image processImage(Image image, int frameNo);
 }

@@ -13,6 +13,7 @@ public class ImageWorkerThread extends Thread {
     protected PPMFile finishedImage;
     protected BlockingQueue<PPMFile> queue; // this queue only ever has max one thing in it, but it's good for synchronization
     protected ImageFilter[] filters;
+    protected int currentFrameNo;
 
     /**
      * Call super() in your subclass, I insist.
@@ -32,7 +33,7 @@ public class ImageWorkerThread extends Thread {
                 return;
             image = new Image(ppm.data, ppm.height, ppm.width);
             for (int i = 0; i < filters.length; i++) {
-                image = filters[i].processImage(image);
+                image = filters[i].processImage(image, currentFrameNo);
             }
             finishImage();
             ppm = null;
@@ -71,10 +72,11 @@ public class ImageWorkerThread extends Thread {
         }
     }
 
-    public void setImage(PPMFile image) {
+    public void setImage(PPMFile image, int frameNo) {
         finishedImage = null;
         imageReady.acquireUninterruptibly();
         queue.add(image);
+        currentFrameNo = frameNo;
     }
 
     public PPMFile getfinishedImage() {

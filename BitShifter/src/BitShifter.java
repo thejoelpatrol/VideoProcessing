@@ -1,11 +1,7 @@
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
 import com.laserscorpion.VideoProcessing.Pixel;
-
-import java.util.concurrent.Semaphore;
 
 public class BitShifter implements ImageFilter{
     int shift;
@@ -17,7 +13,7 @@ public class BitShifter implements ImageFilter{
     }
 
     @Override
-    public Image processImage(Image image) {
+    public Image processImage(Image image, int frameNo) {
         Image toProcess;
         if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(image);

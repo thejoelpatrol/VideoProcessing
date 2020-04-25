@@ -12,6 +12,7 @@ WorkerManager extends Thread {
     private PPMWriter consumer;
     private ImageWorkerThread workerThreads[];
     private Semaphore locks[];
+    private int frameNo = 0;
 
     public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, PPMWriter consumer) {
         this(work, DEFAULT_WORKERS, factories, output, consumer);
@@ -55,7 +56,8 @@ WorkerManager extends Thread {
                     i--;
                     break;
                 }
-                workerThreads[i].setImage(image);
+                workerThreads[i].setImage(image, frameNo);
+                frameNo++;
             }
             for (int j = 0; j < i; j++) {
                 locks[j].acquireUninterruptibly();

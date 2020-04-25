@@ -22,7 +22,7 @@ public class SampleShuffler implements ImageFilter {
     }
 
     @Override
-    public Image processImage(Image image) {
+    public Image processImage(Image image, int frameNo) {
         this.image = image;
         if (glitchFrame())
             return selectAndPlaceSamples();

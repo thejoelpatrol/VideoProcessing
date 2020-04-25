@@ -1,10 +1,6 @@
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
-import com.laserscorpion.VideoProcessing.ImageWorkerThread;
-import com.laserscorpion.VideoProcessing.PPMFile;
-
-import java.util.concurrent.Semaphore;
 
 
 public class VideoCipher implements ImageFilter {
@@ -17,7 +13,7 @@ public class VideoCipher implements ImageFilter {
     }
 
     @Override
-    public Image processImage(Image image) {
+    public Image processImage(Image image, int frameNo) {
         Image toProcess = image;
         if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(image);
