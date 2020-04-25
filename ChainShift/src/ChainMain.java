@@ -4,13 +4,15 @@ import com.laserscorpion.VideoProcessing.VideoProcessor;
 public class ChainMain {
     public static void main(String[] args) {
         /*
-            Just a sample test of chaining filters together after refactoring the interface
+            A sample test of chaining filters together after refactoring the interface that turns out to be good
          */
-
+        if (args.length != 4)
+            printUsageAndExit();
         String infile = args[0];
         int WORKERS = Integer.parseInt(args[1]);
         boolean scale2x = Boolean.parseBoolean(args[2]);
-        BitShifterFactory factory1 = new BitShifterFactory(5, false);
+        int shift =  Integer.parseInt(args[3]);
+        BitShifterFactory factory1 = new BitShifterFactory(shift, false);
         HSVFactory factory2 = new HSVFactory();
 
         ImageFilterFactory[] factories = new ImageFilterFactory[2];
@@ -21,7 +23,7 @@ public class ChainMain {
     }
 
     private static void printUsageAndExit() {
-        //System.err.println("Usage: $ java -jar VideoCipher.jar video-filepath threads-int");
+        System.err.println("Usage: $ java -jar ChainShift.jar video-filepath threads-int scale2x-bool shift-int");
         System.exit(1);
     }
 
