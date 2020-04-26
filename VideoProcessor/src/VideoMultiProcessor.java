@@ -1,6 +1,5 @@
 import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
-import com.sun.xml.internal.xsom.impl.WildcardImpl;
 
 import java.util.ArrayList;
 
@@ -40,7 +39,9 @@ public class VideoMultiProcessor {
                 BitShifterFactory factory = new BitShifterFactory(shift, false);
                 factories.add(factory);
             } else if (filterName.equals("ImageCipher")) {
-                factories.add(new VideoCipherFactory(true));
+                String filterArgs[] = args[i + 1].split(" ");
+                boolean downsample = Boolean.parseBoolean(filterArgs[0]);
+                factories.add(new VideoCipherFactory(downsample));
             } else if (filterName.equals("ByteShifter")) {
                 factories.add(new ByteShiftFactory());
             } else if (filterName.equals("OtherByteShifter")) {
@@ -61,7 +62,14 @@ public class VideoMultiProcessor {
     }
 
     private static void printUsageAndExit() {
-        System.err.println("Usage: $ java -jar PixelSorterMain.jar video-filepath threads-int scale2x-boolean --Filter \"filter args\" [--MoreFilters \"filter args\"]");
+        System.err.println("Usage: $ java -jar VideoMultiProcessor.jar video-filepath threads-int scale2x-boolean --Filter \"filter args\" [--MoreFilters \"filter args\"]");
+        System.err.println("Available filters:");
+        System.err.println("--SampleShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double\"");
+        System.err.println("--BitShifter shift-int");
+        System.err.println("--ImageCipher downsample-boolean");
+        System.err.println("--OtherByteShifter offset-per-frame-int");
+        System.err.println("--RGBHSV");
+        System.err.println("--PixelSorter hsv-boolean");
         System.exit(1);
     }
 }
