@@ -18,7 +18,9 @@ public class VideoMultiProcessor {
             if (!filterName.substring(0, 2).equals("--"))
                 printUsageAndExit();
             filterName = filterName.substring(2);
-            if (filterName.equals("SampleShuffler")) {
+            if (filterName.equals("help")) {
+                printUsageAndExit();
+            } else if (filterName.equals("SampleShuffler")) {
                 String filterArgs[] = args[i + 1].split(" ");
                 int samples = Integer.parseInt(filterArgs[0]);
                 boolean snap = Boolean.parseBoolean(filterArgs[1]);
