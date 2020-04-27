@@ -6,6 +6,7 @@ import com.laserscorpion.VideoProcessing.filters.ImageCipher.VideoCipherFactory;
 import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
+import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
 
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class VideoMultiProcessor {
                 String filterArgs[] = args[i + 1].split(" ");
                 int offsetPerFrame = Integer.parseInt(filterArgs[0]);
                 factories.add(new OtherByteShiftFactory(offsetPerFrame));
+            } else if (filterName.equals("ReverseAdder")) {
+                factories.add(new ReverseAdderFactory());
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();

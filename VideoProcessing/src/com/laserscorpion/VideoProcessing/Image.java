@@ -86,6 +86,20 @@ public class Image {
         return result;
     }
 
+    public byte[] toRGBArray() {
+        byte[] rgbResult = new byte[3 * width * height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Pixel pixel = pixels[y][x];
+                int i = 3 * (x + y*width);
+                rgbResult[i] = (byte)pixel.r;
+                rgbResult[i+1] =  (byte)(pixel.g);
+                rgbResult[i+2] =  (byte)(pixel.b);
+            }
+        }
+        return rgbResult;
+    }
+
     private short promote(byte b) {
         return (short)((short)0x00FF & (short)b);
     }
