@@ -1,5 +1,12 @@
 import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
+import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
+import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
+import com.laserscorpion.VideoProcessing.filters.ImageCipher.VideoCipherFactory;
+import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
+import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
+import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
+import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
 
 import java.util.ArrayList;
 
@@ -51,7 +58,8 @@ public class VideoMultiProcessor {
                 int offsetPerFrame = Integer.parseInt(filterArgs[0]);
                 factories.add(new OtherByteShiftFactory(offsetPerFrame));
             } else {
-                throw new ClassNotFoundException("Just what filter do you think you're trying to use? " + filterName + "?");
+                System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
+                printUsageAndExit();
             }
         }
 
@@ -70,7 +78,7 @@ public class VideoMultiProcessor {
         System.err.println("--BitShifter shift-int");
         System.err.println("--ImageCipher downsample-boolean");
         System.err.println("--OtherByteShifter offset-per-frame-int");
-        System.err.println("--RGBHSV");
+        System.err.println("--RGBHSV none");
         System.err.println("--PixelSorter hsv-boolean");
         System.exit(1);
     }
