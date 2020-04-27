@@ -2,6 +2,7 @@ import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
 import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
+import com.laserscorpion.VideoProcessing.filters.ChillerShuffler.ChillerShufflerFactory;
 import com.laserscorpion.VideoProcessing.filters.ImageCipher.VideoCipherFactory;
 import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
@@ -60,6 +61,15 @@ public class VideoMultiProcessor {
                 factories.add(new OtherByteShiftFactory(offsetPerFrame));
             } else if (filterName.equals("ReverseAdder")) {
                 factories.add(new ReverseAdderFactory());
+            } else if (filterName.equals("ChillerShuffler")) {
+                    String filterArgs[] = args[i + 1].split(" ");
+                    int samples = Integer.parseInt(filterArgs[0]);
+                    boolean snap = Boolean.parseBoolean(filterArgs[1]);
+                    int maxSampleHeight = Integer.parseInt(filterArgs[2]);
+                    double glitchProbability = Double.parseDouble(filterArgs[3]);
+                    int everyNthFrame = Integer.parseInt(filterArgs[4]);
+                    ChillerShufflerFactory factory = new ChillerShufflerFactory(samples, snap, maxSampleHeight, glitchProbability, everyNthFrame);
+                    factories.add(factory);
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -83,6 +93,7 @@ public class VideoMultiProcessor {
         System.err.println("--OtherByteShifter offset-per-frame-int");
         System.err.println("--RGBHSV none");
         System.err.println("--PixelSorter hsv-boolean");
+        System.err.println("--ChillerShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double everyNthFrame\"");
         System.exit(1);
     }
 }
