@@ -1,15 +1,11 @@
+package com.laserscorpion.VideoProcessing.filters.ByteShifter;
+
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
 
-import java.awt.Color;
-
-public class RGBHSV implements ImageFilter {
+public class ByteShifter implements ImageFilter {
     private static final float CHANNEL_MAX = 255.0F;
-
-    /*public RGBHSV(int shift, boolean downsample) {
-
-    }*/
 
     @Override
     public Image processImage(Image image, int frameNo) {
@@ -19,16 +15,14 @@ public class RGBHSV implements ImageFilter {
             for (int x = 0; x < image.width; x++) {
                 int i = 3 * (x + y*image.width);
                 Pixel pixel = image.pixels[y][x];
-                float h = pixel.r / CHANNEL_MAX;
-                float s = pixel.g / CHANNEL_MAX;
-                float v = pixel.b / CHANNEL_MAX;
-                int rgb = Color.HSBtoRGB(h, s, v);
-
-                rgbResult[i] = (byte)((rgb & 0xFF0000) >> 16);
-                rgbResult[i+1] = (byte)((rgb & 0x00FF00) >> 8);
-                rgbResult[i+2] = (byte)(rgb & 0xFF);
+                rgbResult[i] = (byte)pixel.r;
+                rgbResult[i+1] = (byte)pixel.g;
+                rgbResult[i+2] = (byte)pixel.b;
             }
         }
+        System.arraycopy(rgbResult, 0, rgbResult, 1, rgbResult.length - 1);
+
+        rgbResult[0] = (byte)0xFF;
 
         return new Image(rgbResult, image.height, image.width);
     }

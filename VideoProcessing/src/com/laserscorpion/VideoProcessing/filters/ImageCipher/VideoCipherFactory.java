@@ -1,17 +1,17 @@
+package com.laserscorpion.VideoProcessing.filters.ImageCipher;
+
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 
-public class BitShifterFactory implements ImageFilterFactory {
+public class VideoCipherFactory implements ImageFilterFactory {
     private boolean downsample;
-    private int shift;
 
-    public BitShifterFactory(int shift, boolean downsample) {
+    public VideoCipherFactory(boolean downsample) {
         this.downsample = downsample;
-        this.shift = shift;
     }
 
     @Override
     public ImageFilter create() {
-        return new BitShifter(shift, downsample);
+        return new VideoCipher(downsample);
     }
 }

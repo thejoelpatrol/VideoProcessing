@@ -1,5 +1,6 @@
+package com.laserscorpion.VideoProcessing.filters.ImageCipher;
+
 import com.laserscorpion.VideoProcessing.Image;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

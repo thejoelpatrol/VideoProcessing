@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing.filters.BitShifter;
+
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;

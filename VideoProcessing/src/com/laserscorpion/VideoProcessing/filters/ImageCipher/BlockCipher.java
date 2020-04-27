@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing.filters.ImageCipher;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 

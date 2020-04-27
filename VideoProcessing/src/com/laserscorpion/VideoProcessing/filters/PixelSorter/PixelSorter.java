@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing.filters.PixelSorter;
+
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;

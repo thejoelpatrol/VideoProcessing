@@ -1,3 +1,5 @@
+package com.laserscorpion.VideoProcessing.filters.SampleShuffler;
+
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 
