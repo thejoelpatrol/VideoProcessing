@@ -45,7 +45,7 @@ public class ColorDownsampler {
                 for (int k = 1; k < selectedOutputColors.length; k++) {
                     closestColor = pickCloserColor(pixelColor, closestColor, selectedOutputColors[k]);
                 }
-                convertedColors[index] = closestColor;
+                convertedColors[index] = closestColor.copyOf();
             }
         }
         return convertedColors;
@@ -117,12 +117,12 @@ public class ColorDownsampler {
 
         Channel sortRange = selectRange(RGBTriples);
         SortingPixels sorter = new SortingPixels(sortRange);
-        int[][] sortedCopy = Arrays.copyOf(RGBTriples, RGBTriples.length);
-        Arrays.sort(sortedCopy, sorter);
+        //int[][] sortedCopy = Arrays.copyOf(RGBTriples, RGBTriples.length);
+        Arrays.sort(RGBTriples, sorter);
 
-        int midpoint = sortedCopy.length / 2;
-        int[][] firstHalf = Arrays.copyOfRange(sortedCopy, 0, midpoint);
-        int[][] secondHalf = Arrays.copyOfRange(sortedCopy, midpoint, sortedCopy.length);
+        int midpoint = RGBTriples.length / 2;
+        int[][] firstHalf = Arrays.copyOfRange(RGBTriples, 0, midpoint);
+        int[][] secondHalf = Arrays.copyOfRange(RGBTriples, midpoint, RGBTriples.length);
 
         int[] firstHalfAverages = medianCut(firstHalf, desiredColors / 2);
         int[] secondHalfAverages = medianCut(secondHalf, desiredColors / 2);
@@ -165,11 +165,10 @@ public class ColorDownsampler {
             greenSum += rgb[1];
             blueSum += rgb[2];
         }
-        int[] result = new int[3];
-        result[0] = redSum / RGBTriples.length;
-        result[1] = greenSum / RGBTriples.length;
-        result[2] = blueSum / RGBTriples.length;
-        Color color = new Color(result[0], result[1], result[2]);
+        int r = redSum / RGBTriples.length;
+        int g = greenSum / RGBTriples.length;
+        int b = blueSum / RGBTriples.length;
+        Color color = new Color(r, g, b);
         return color.getRGB();
     }
 

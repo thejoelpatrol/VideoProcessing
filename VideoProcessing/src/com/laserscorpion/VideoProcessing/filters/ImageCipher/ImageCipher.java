@@ -45,13 +45,8 @@ public class ImageCipher {
     }
 
     public Image encryptImageData(Image clearText) {
-        //BufferedImage buffered = clearText.toBufferedImage();
-        //int[] cleartextRGB = buffered.getRGB(0, 0, clearText.width, clearText.height, null, 0, buffered.getWidth());
-        //byte[] cleartextBytes = convertToBytes(cleartextRGB);
         byte[] cleartextBytes = clearText.toRGBArray();
         byte[] encryptedBytes = encryptBytes(cleartextBytes);
-        //Image encryptedImage = new Image(encryptedBytes, clearText.height, clearText.width);
-        //return encryptedImage;
         Image ciphertext = clearText;
         ciphertext.replaceRGB(encryptedBytes);  // in fact we are also replacing the cleartext
         return ciphertext;                      // but conceptually we want to return the ciphertext...
