@@ -75,14 +75,6 @@ public class ColorDownsampler {
 
         int[] topXcolors = medianCut(colorTriples, topColorCount);
 
-        /*synchronized (System.err) {
-            System.err.print("top ints: ");
-            for (int x : topXcolors) {
-                System.err.print(x + ":");
-            }
-            System.err.print("\n");
-        }*/
-
         Pixel[] topColors = new Pixel[topXcolors.length];
         for (int i = 0; i < topXcolors.length; i++) {
             topColors[i] = new Pixel();
@@ -116,20 +108,6 @@ public class ColorDownsampler {
      * @return desiredColors representative average colors
      */
     private int[] medianCut(int[][] RGBTriples, int desiredColors) {
-        /*if (desiredColors == 16) {
-            synchronized (System.err) {
-                System.err.print("desiredColors: " + desiredColors + " -- ");
-                for (int i = 50; i<60; i++) {
-                    for (int x : RGBTriples[i]){
-                        System.err.print(x + ":");
-                    }
-                    System.err.print(" ");
-                }
-                System.err.print("\n");
-            }
-
-        }*/
-
         if (desiredColors == 1) {
             int average = averageColor(RGBTriples);
             int[] result = new int[1];

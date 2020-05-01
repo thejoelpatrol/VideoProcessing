@@ -35,7 +35,7 @@ class PPMWriter extends Thread {
             frame++;
             //System.exit(0);
             if (frame % 200 == 0)
-                System.err.println("output queue size " + images.size());
+                System.err.println("output queue size " + images.size() + "   ");
         }
         System.err.println("done encoding");
         try {
