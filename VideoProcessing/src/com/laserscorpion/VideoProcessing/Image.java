@@ -68,9 +68,22 @@ public class Image {
     }
 
     public Image(BufferedImage image) {
-        throw new NotImplementedException(); // this is not a great thing to do...should probably just create a new exception type
-        //Image(image.getRGB())
-    }
+        int rgb[] = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+        this.height = image.getHeight();
+        this.width = image.getWidth();
+        pixels = new Pixel[height][];
+        for (int i = 0; i < height; i++) {
+            pixels[i] = new Pixel[width];
+            for (int j = 0; j < width; j++) {
+                int k = j + i*width;
+                Pixel p = new Pixel();
+                p.r = (short)((rgb[k] & 0xFF0000) >> 16);
+                p.g = (short)((rgb[k] & 0x00FF00) >> 8);
+                p.b = (short)(rgb[k] & 0x0000FF);
+                pixels[i][j] = p;
+            }
+        }
+     }
 
     public BufferedImage toBufferedImage() {
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -98,6 +111,18 @@ public class Image {
             }
         }
         return rgbResult;
+    }
+
+    public void replaceRGB(byte rgb[]) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Pixel pixel = pixels[y][x];
+                int i = 3 * (x + y*width);
+                pixel.r = rgb[i];
+                pixel.g = rgb[i + 1];
+                pixel.b = rgb[i + 2];
+            }
+        }
     }
 
     private short promote(byte b) {
