@@ -22,8 +22,8 @@ public class ReverseAdder implements ImageFilter {
             int j = rgbResult.length - i - 1;
             rgbResult[i] += rgbResult[j];
         }
-
-        return new Image(rgbResult, image.height, image.width);
+        image.replaceRGB(rgbResult);
+        return image;
     }
 
 }

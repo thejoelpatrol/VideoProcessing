@@ -9,9 +9,9 @@ public class ByteShifter implements ImageFilter {
 
     @Override
     public Image processImage(Image image, int frameNo) {
-        byte[] rgbResult = new byte[3 * image.width * image.height];
+        byte[] rgbResult = image.toRGBArray();
 
-        for (int y = 0; y < image.height; y++) {
+        /*for (int y = 0; y < image.height; y++) {
             for (int x = 0; x < image.width; x++) {
                 int i = 3 * (x + y*image.width);
                 Pixel pixel = image.pixels[y][x];
@@ -19,11 +19,11 @@ public class ByteShifter implements ImageFilter {
                 rgbResult[i+1] = (byte)pixel.g;
                 rgbResult[i+2] = (byte)pixel.b;
             }
-        }
+        }*/
         System.arraycopy(rgbResult, 0, rgbResult, 1, rgbResult.length - 1);
 
-        rgbResult[0] = (byte)0xFF;
-
-        return new Image(rgbResult, image.height, image.width);
+        rgbResult[0] = (byte)0xFF; // why?
+        image.replaceRGB(rgbResult);
+        return image;
     }
 }

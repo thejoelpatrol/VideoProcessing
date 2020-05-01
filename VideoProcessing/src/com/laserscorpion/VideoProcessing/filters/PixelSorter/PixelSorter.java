@@ -19,13 +19,13 @@ public class PixelSorter implements ImageFilter {
     public Image processImage(Image image, int frameNo) {
         byte[] rgbResult = new byte[3 * image.width * image.height];
 
+        int row[] = new int[image.width];
+        float hsv[] = new float[3];
         for (int y = 0; y < image.height; y++) {
             Pixel pixelRow[] = image.pixels[y];
-            int row[] = new int[pixelRow.length];
             for (int x = 0; x < pixelRow.length; x++) {
                 Pixel pixel = pixelRow[x];
-                if (hsv) {
-                    float hsv[] = new float[3];
+                if (this.hsv) {
                     Color.RGBtoHSB(pixel.r, pixel.g, pixel.b, hsv);
                     int h = (int) (hsv[0] * CHANNEL_MAX) << 16;
                     int s = (int) (hsv[1] * CHANNEL_MAX) << 8;
@@ -37,7 +37,7 @@ public class PixelSorter implements ImageFilter {
             }
             Arrays.sort(row);
             for (int x = 0; x < pixelRow.length; x++) {
-                if (hsv) {
+                if (this.hsv) {
                     float h = ((row[x] & 0xFF0000) >> 16) / CHANNEL_MAX;
                     float s = ((row[x] & 0x00FF00) >> 8) / CHANNEL_MAX;
                     float v = (row[x] & 0x0000FF) / CHANNEL_MAX;
@@ -49,7 +49,8 @@ public class PixelSorter implements ImageFilter {
                 rgbResult[i + 2] = (byte) (row[x] & 0xFF);
             }
         }
-        return new Image(rgbResult, image.height, image.width);
+        image.replaceRGB(rgbResult);
+        return image;
     }
 
 }

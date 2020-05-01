@@ -33,7 +33,8 @@ public class BitShifter implements ImageFilter{
                 rgbResult[i+2] =  rotateRight(pixel.b, shift);
             }
         }
-        return new Image(rgbResult, toProcess.height, toProcess.width);
+        image.replaceRGB(rgbResult);
+        return image;
     }
 
     private byte rotateRight(short orig, int digits) {

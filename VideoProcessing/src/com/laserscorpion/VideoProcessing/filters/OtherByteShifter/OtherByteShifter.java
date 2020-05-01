@@ -4,6 +4,8 @@ import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
 
+import java.util.Arrays;
+
 public class OtherByteShifter implements ImageFilter {
     private int offsetPerFrame;
 
@@ -13,10 +15,10 @@ public class OtherByteShifter implements ImageFilter {
 
     @Override
     public Image processImage(Image image, int frameNo) {
-        byte[] rgbResult = new byte[3 * image.width * image.height];
-        byte[] temp = new byte[3 * image.width * image.height];
+        byte[] rgbResult = image.toRGBArray();
+        byte[] temp = Arrays.copyOf(rgbResult, rgbResult.length);
 
-        for (int y = 0; y < image.height; y++) {
+        /*for (int y = 0; y < image.height; y++) {
             for (int x = 0; x < image.width; x++) {
                 int i = 3 * (x + y*image.width);
                 Pixel pixel = image.pixels[y][x];
@@ -24,15 +26,15 @@ public class OtherByteShifter implements ImageFilter {
                 temp[i + 1] = (byte)pixel.g;
                 temp[i + 2] = (byte)pixel.b;
             }
-        }
+        }*/
         int cutoff = offsetPerFrame*frameNo % rgbResult.length;
         int rest = rgbResult.length - cutoff;
 
         System.arraycopy(temp, 0, rgbResult, cutoff, rest);
         System.arraycopy(temp, rest, rgbResult, 0, cutoff);
 
-        rgbResult[0] = (byte)0xFF;
-
-        return new Image(rgbResult, image.height, image.width);
+        rgbResult[0] = (byte)0xFF; // why?
+        image.replaceRGB(rgbResult);
+        return image;
     }
 }

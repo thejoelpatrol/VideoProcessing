@@ -52,8 +52,9 @@ public class ImageCipher {
         byte[] encryptedBytes = encryptBytes(cleartextBytes);
         //Image encryptedImage = new Image(encryptedBytes, clearText.height, clearText.width);
         //return encryptedImage;
-        clearText.replaceRGB(encryptedBytes);
-        return clearText;
+        Image ciphertext = clearText;
+        ciphertext.replaceRGB(encryptedBytes);  // in fact we are also replacing the cleartext
+        return ciphertext;                      // but conceptually we want to return the ciphertext...
     }
 
     private byte[] convertToBytes(int[] ints) {

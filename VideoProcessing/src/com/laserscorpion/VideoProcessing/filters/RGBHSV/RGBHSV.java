@@ -31,7 +31,7 @@ public class RGBHSV implements ImageFilter {
                 rgbResult[i+2] = (byte)(rgb & 0xFF);
             }
         }
-
-        return new Image(rgbResult, image.height, image.width);
+        image.replaceRGB(rgbResult);
+        return image;
     }
 }
