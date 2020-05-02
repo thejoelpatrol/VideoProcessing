@@ -31,7 +31,12 @@ public class ImageWorkerThread extends Thread {
             ppm = takeAlmostUninterruptibly();
             if (ppm == null)
                 return;
-            image = new Image(ppm.data, ppm.height, ppm.width);
+
+            if (image == null || !(image.width == ppm.width && image.height == ppm.height))
+                image = new Image(ppm.data, ppm.height, ppm.width);
+            else
+                image.replaceRGB(ppm.data);
+
             for (int i = 0; i < filters.length; i++) {
                 image = filters[i].processImage(image, currentFrameNo);
             }

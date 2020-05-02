@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class VideoProcessor {
@@ -15,6 +17,7 @@ public class VideoProcessor {
 
     private BlockingQueue<PPMFile> images;
     private BlockingQueue<PPMFile> outputImages;
+    private Queue<PPMFile> scratchFiles;
     private ImageFilterFactory[] factories;
     private int workers;
 
@@ -37,6 +40,7 @@ public class VideoProcessor {
 
         images = new LinkedBlockingQueue<>(QUEUE_SIZE);
         outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
+        scratchFiles = new ConcurrentLinkedQueue<>();
 
         ArrayList<String> inArgsList = new ArrayList<>();
         inArgsList.add("ffmpeg");
@@ -73,8 +77,8 @@ public class VideoProcessor {
             System.exit(1);
         }
 
-        reader = new PPMReader(input.getInputStream(), images);
-        encoder = new PPMWriter(outputImages, output.getOutputStream());
+        reader = new PPMReader(input.getInputStream(), images, scratchFiles);
+        encoder = new PPMWriter(outputImages, output.getOutputStream(), scratchFiles);
         manager = new WorkerManager(images, workers, factories, outputImages, encoder);
 
         reader.start();

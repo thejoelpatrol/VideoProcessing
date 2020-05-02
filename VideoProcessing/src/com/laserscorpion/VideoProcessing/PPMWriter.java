@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 class PPMWriter extends Thread {
     private static final String IMAGE_FORMAT = "JPG";
     private BlockingQueue<PPMFile> images;
+    private Queue<PPMFile> scratchImages;
     private boolean keepWaiting = true;
 //    private String outputDir;
     private OutputStream output;
@@ -18,9 +20,10 @@ class PPMWriter extends Thread {
     private int frame = 0;
 
 
-    public PPMWriter(BlockingQueue<PPMFile> images, OutputStream output) {
+    public PPMWriter(BlockingQueue<PPMFile> images, OutputStream output, Queue<PPMFile> scratchImages) {
         this.images = images;
         this.output = output;
+        this.scratchImages = scratchImages;
         /*this.outputDir = outputDir + '/' + new Date().getTime() + '/';
         File f = new File(this.outputDir);
         f.mkdir();*/
@@ -32,6 +35,7 @@ class PPMWriter extends Thread {
             if (image == null)
                 break;
             saveImage(image);
+            scratchImages.add(image);
             frame++;
             //System.exit(0);
             if (frame % 200 == 0)

@@ -3,16 +3,19 @@ package com.laserscorpion.VideoProcessing;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 class PPMReader extends Thread {
     private int frames = 0;
     private InputStream stream;
     private BlockingQueue<PPMFile> queue;
+    private Queue<PPMFile> scratchImages;
 
-    public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue) {
+    public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue, Queue<PPMFile> scratchImages) {
         this.stream = stream;
         this.queue = queue;
+        this.scratchImages = scratchImages;
     }
 
     @Override
@@ -74,10 +77,13 @@ class PPMReader extends Thread {
         int width = Integer.parseInt(width_height[0]);
         int height = Integer.parseInt(width_height[1]);
 
-        PPMFile ppmFile = new PPMFile();
-        ppmFile.width = width;
-        ppmFile.height = height;
-        ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
+        PPMFile ppmFile = scratchImages.poll();
+        if (ppmFile == null || !(ppmFile.width == width && ppmFile.height == height)) {
+            ppmFile = new PPMFile();
+            ppmFile.width = width;
+            ppmFile.height = height;
+            ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
+        }
 
         c = readChar(fileReader);
         String maxVal = "";
