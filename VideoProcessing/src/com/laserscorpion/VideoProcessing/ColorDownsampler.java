@@ -8,10 +8,12 @@ import java.util.Date;
 public class ColorDownsampler {
     private enum Channel {RED, GREEN, BLUE}
     Image originalImage;
+    MemoryAllocator allocator;
 
 
     public ColorDownsampler(Image original) {
         originalImage = original;
+        allocator = MemoryAllocator.getInstance();
         //originalRGB = original.getRGB(0, 0, original.getWidth(), original.getHeight(), null, 0, original.getWidth());
     }
 
@@ -121,16 +123,29 @@ public class ColorDownsampler {
         Arrays.sort(RGBTriples, sorter);
 
         int midpoint = RGBTriples.length / 2;
+
         int[][] firstHalf = Arrays.copyOfRange(RGBTriples, 0, midpoint);
         int[][] secondHalf = Arrays.copyOfRange(RGBTriples, midpoint, RGBTriples.length);
 
         int[] firstHalfAverages = medianCut(firstHalf, desiredColors / 2);
         int[] secondHalfAverages = medianCut(secondHalf, desiredColors / 2);
-        return merge(firstHalfAverages, secondHalfAverages);
+        int[] result = merge(firstHalfAverages, secondHalfAverages);
+        allocator.free(firstHalfAverages);
+        allocator.free(secondHalfAverages);
+        return result;
     }
 
+    /*private byte[] copyOfRange(byte[] source, int start, int end) {
+        byte[] copy = allocator.malloc(end - start);
+        for (int i = start; i < end; i++) {
+            copy[i - start] = source[i];
+        }
+        return copy;
+    }*/
+
     private int[] merge(int[] array1, int[] array2) {
-        int[] result = new int[array1.length + array2.length];
+        //int[] result = new int[array1.length + array2.length];
+        int[] result = allocator.malloc(array1.length + array2.length);
         int i = 0;
         while (i < array1.length) {
             result[i] = array1[i];
