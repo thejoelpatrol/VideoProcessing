@@ -20,7 +20,7 @@ public class ColorDownsampler {
         Pixel[] commonColors = selectColors(outputColors);
         Date now = new Date();
         Long diff = now.getTime() - then.getTime();
-        boolean print = (now.getTime() % 20L == 0L);
+        boolean print = false; //(now.getTime() % 20L == 0L);
         if (print) {
             System.err.println("selecting colors took " + diff + " ms");
         }

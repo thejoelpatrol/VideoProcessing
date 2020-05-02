@@ -118,9 +118,9 @@ public class Image {
             for (int x = 0; x < width; x++) {
                 Pixel pixel = pixels[y][x];
                 int i = 3 * (x + y*width);
-                pixel.r = rgb[i];
-                pixel.g = rgb[i + 1];
-                pixel.b = rgb[i + 2];
+                pixel.r = promote(rgb[i]);
+                pixel.g = promote(rgb[i + 1]);
+                pixel.b = promote(rgb[i + 2]);
             }
         }
     }
