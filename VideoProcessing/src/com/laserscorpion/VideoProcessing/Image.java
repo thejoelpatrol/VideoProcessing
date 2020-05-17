@@ -51,7 +51,10 @@ public class Image {
     private Pixel[] copyOf(Pixel[] pixels) {
         Pixel[] result = new Pixel[pixels.length];
         for (int i = 0; i < pixels.length; i++) {
-            result[i] = pixels[i];
+            result[i] = new Pixel();
+            result[i].r = pixels[i].r;
+            result[i].g = pixels[i].g;
+            result[i].b = pixels[i].b;
         }
         return result;
     }
