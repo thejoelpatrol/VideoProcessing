@@ -1,8 +1,15 @@
 package com.laserscorpion.VideoProcessing;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
+
+import javax.imageio.ImageIO;
 
 public class ImageWorkerThread extends Thread {
     private Semaphore imageReady;
@@ -12,6 +19,7 @@ public class ImageWorkerThread extends Thread {
     //protected Image processedImage;
     protected PPMFile finishedImage;
     protected BlockingQueue<PPMFile> queue; // this queue only ever has max one thing in it, but it's good for synchronization
+    protected Queue<PPMFile> scratchImages;
     protected ImageFilter[] filters;
     protected int currentFrameNo;
 
@@ -19,10 +27,11 @@ public class ImageWorkerThread extends Thread {
      * Call super() in your subclass, I insist.
      * @param outputReady
      */
-    public ImageWorkerThread(ImageFilter[] filters, Semaphore outputReady) {
+    public ImageWorkerThread(ImageFilter[] filters, Semaphore outputReady, Queue<PPMFile> scratchImages) {
         this.imageReady = outputReady;
         queue = new ArrayBlockingQueue<PPMFile>(1);
         this.filters = filters;
+        this.scratchImages = scratchImages;
     }
 
     @Override
@@ -38,9 +47,11 @@ public class ImageWorkerThread extends Thread {
                 image.replaceRGB(ppm.data);
 
             for (int i = 0; i < filters.length; i++) {
+
                 image = filters[i].processImage(image, currentFrameNo);
             }
             finishImage();
+            //scratchImages.add(ppm);
             ppm = null;
             imageReady.release();
         }

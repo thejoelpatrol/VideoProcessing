@@ -79,7 +79,7 @@ public class VideoProcessor {
 
         reader = new PPMReader(input.getInputStream(), images, scratchFiles);
         encoder = new PPMWriter(outputImages, output.getOutputStream(), scratchFiles);
-        manager = new WorkerManager(images, workers, factories, outputImages, encoder);
+        manager = new WorkerManager(images, workers, factories, outputImages, scratchFiles, encoder);
 
         reader.start();
         manager.start();

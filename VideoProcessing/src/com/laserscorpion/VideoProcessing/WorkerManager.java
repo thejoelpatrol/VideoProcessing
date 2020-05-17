@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing;
 
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -14,11 +15,11 @@ WorkerManager extends Thread {
     private Semaphore locks[];
     private int frameNo = 0;
 
-    public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, PPMWriter consumer) {
-        this(work, DEFAULT_WORKERS, factories, output, consumer);
+    public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
+        this(work, DEFAULT_WORKERS, factories, output, scratchImages, consumer);
     }
 
-    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
@@ -32,7 +33,7 @@ WorkerManager extends Thread {
             for (int j = 0; j < filters.length; j++) {
                 filters[j] = factories[j].create();
             }
-            workerThreads[i] = new ImageWorkerThread(filters, locks[i]);
+            workerThreads[i] = new ImageWorkerThread(filters, locks[i], scratchImages);
         }
     }
 
