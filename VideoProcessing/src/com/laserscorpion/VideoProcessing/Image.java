@@ -51,10 +51,7 @@ public class Image {
     private Pixel[] copyOf(Pixel[] pixels) {
         Pixel[] result = new Pixel[pixels.length];
         for (int i = 0; i < pixels.length; i++) {
-            result[i] = new Pixel();
-            result[i].r = pixels[i].r;
-            result[i].g = pixels[i].g;
-            result[i].b = pixels[i].b;
+            result[i] = pixels[i].copyOf();
         }
         return result;
     }
@@ -65,7 +62,7 @@ public class Image {
                 int xLoc = x + xOffset;
                 int yLoc = y + yOffset;
                 if (xLoc < width && yLoc < height)
-                    pixels[yLoc][xLoc] = subImage.pixels[y][x];
+                    pixels[yLoc][xLoc] = subImage.pixels[y][x].copyOf();
             }
         }
     }
