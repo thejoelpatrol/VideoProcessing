@@ -1,0 +1,3 @@
+[submodule "pypng"]
+	path = pypng
+	url = https://github.com/thejoelpatrol/pypng
