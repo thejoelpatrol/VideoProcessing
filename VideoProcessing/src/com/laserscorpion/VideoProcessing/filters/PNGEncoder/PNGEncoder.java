@@ -5,24 +5,16 @@ import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.filters.PNGEncoder.hjgawt.PngReaderBI;
 import com.laserscorpion.VideoProcessing.filters.PNGEncoder.hjgawt.PngWriterBI;
-import com.sun.tools.doclets.internal.toolkit.util.DocFinder;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.IImageLineSet;
-import ar.com.hjg.pngj.PngHelperInternal;
 import ar.com.hjg.pngj.PngReader;
 import ar.com.hjg.pngj.PngWriter;
 
