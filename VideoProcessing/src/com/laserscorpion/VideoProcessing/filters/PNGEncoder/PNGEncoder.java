@@ -35,11 +35,9 @@ public class PNGEncoder implements ImageFilter {
 
     @Override
     public Image processImage(Image image, int frameNo) {
-        //byte[] rgbResult = image.toRGBArray();
-
         ColorDownsampler ds = new ColorDownsampler(image);
-        //Image downsampled = ds.downsample(32);
-        Image downsampled = image;
+        Image downsampled = ds.downsample(32);
+        //Image downsampled = image;
 
         try {
             File tmpPng = encodePNG(downsampled);
@@ -83,9 +81,6 @@ public class PNGEncoder implements ImageFilter {
         ByteArrayInputStream is = new ByteArrayInputStream(initialPngBytes);
         PngReader pngr = new PngReader(is);
         File tempPng = File.createTempFile("tmppng-", ".png");
-        //FileOutputStream fos = new FileOutputStream(tempPng);
-        //ByteArrayOutputStream reencodedOs = new ByteArrayOutputStream();
-        //PngWriter pngw2 = new PngWriter(reencodedOs, pngr.imgInfo);
         PngWriter pngw2 = new PngWriter(tempPng, pngr.imgInfo);
         pngw2.copyChunksFrom(pngr.getChunksList());
         IImageLineSet<? extends IImageLine> lines = pngr.readRows();
@@ -98,10 +93,9 @@ public class PNGEncoder implements ImageFilter {
             pngw2.writeRow(lines.getImageLine(row));
         }
         pngr.end();
-        long crc0 = PngHelperInternal.getDigest(pngr);
+        //long crc0 = PngHelperInternal.getDigest(pngr);
         pngw2.end();
 
-        //System.err.println("Temp file: " + tempPng.getAbsolutePath());
         return tempPng;
     }
 

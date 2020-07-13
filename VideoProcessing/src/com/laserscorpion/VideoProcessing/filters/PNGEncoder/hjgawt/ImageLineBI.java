@@ -1,3 +1,10 @@
+/**
+ * This file copied from the tests for pngj, a library whose jars we link to.
+ *
+ * Author: Hernan Gonzalez hgonzalez@gmail.com
+ * https://github.com/leonbloy/pngj
+ */
+
 package com.laserscorpion.VideoProcessing.filters.PNGEncoder.hjgawt;
 
 import java.awt.Transparency;
