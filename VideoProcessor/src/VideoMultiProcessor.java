@@ -12,6 +12,7 @@ import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactor
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class VideoMultiProcessor {
 
@@ -84,7 +85,8 @@ public class VideoMultiProcessor {
         for (int i = 0; i < factories.size(); i++) {
             factoriesArray[i] = factories.get(i);
         }
-        VideoProcessor processor = new VideoProcessor(infile, factoriesArray, workers, scale2x);
+        String argString = String.join("_", Arrays.copyOfRange(args, 1, args.length));
+        VideoProcessor processor = new VideoProcessor(infile, factoriesArray, argString, workers, scale2x);
         processor.start();
     }
 
@@ -99,6 +101,7 @@ public class VideoMultiProcessor {
         System.err.println("--PixelSorter hsv-boolean");
         System.err.println("--ChillerShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double everyNthFrame\"");
         System.err.println("--PNGEncoder none");
+        System.err.println("--ReverseAdder none");
         System.exit(1);
     }
 }

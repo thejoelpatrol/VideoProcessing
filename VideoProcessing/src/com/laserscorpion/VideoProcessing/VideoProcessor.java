@@ -30,11 +30,11 @@ public class VideoProcessor {
     Process input;
     Process output;
 
-    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, int workers) {
-        this(inputFilepath, factories, workers, false);
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString, int workers) {
+        this(inputFilepath, factories, argString, workers, false);
     }
 
-    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, int workers, boolean scale2x) {
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString, int workers, boolean scale2x) {
         this.workers = workers;
         this.factories = factories;
 
@@ -55,7 +55,7 @@ public class VideoProcessor {
         ArrayList<String> outArgsList = new ArrayList<>();
         outArgsList.add("ffmpeg");
         outArgsList.addAll(Arrays.asList(ffmpegOutputArgs.split(" ")));
-        outArgsList.add(inputFilepath + "_" + new Date().getTime() + ".mp4");
+        outArgsList.add(inputFilepath + "_" + new Date().getTime() + "_" + argString + ".mp4");
         String[] outArgs = new String[outArgsList.size()];
         outArgs = outArgsList.toArray(outArgs);
 
