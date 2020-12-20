@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.RGBHSV;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
@@ -8,14 +9,15 @@ import java.awt.Color;
 
 public class RGBHSV implements ImageFilter {
     private static final float CHANNEL_MAX = 255.0F;
+    ByteMemoryAllocator allocator;
 
-    /*public com.laserscorpion.VideoProcessing.filters.RGBHSV.RGBHSV(int shift, boolean downsample) {
-
-    }*/
+    public RGBHSV() {
+        allocator = ByteMemoryAllocator.getInstance();
+    }
 
     @Override
     public Image processImage(Image image, int frameNo) {
-        byte[] rgbResult = new byte[3 * image.width * image.height];
+        byte[] rgbResult = allocator.malloc(3 * image.width * image.height);
 
         for (int y = 0; y < image.height; y++) {
             for (int x = 0; x < image.width; x++) {
@@ -32,6 +34,7 @@ public class RGBHSV implements ImageFilter {
             }
         }
         image.replaceRGB(rgbResult);
+        allocator.free(rgbResult);
         return image;
     }
 }

@@ -8,12 +8,12 @@ import java.util.Date;
 public class ColorDownsampler {
     private enum Channel {RED, GREEN, BLUE}
     Image originalImage;
-    MemoryAllocator allocator;
+    IntMemoryAllocator allocator;
 
 
     public ColorDownsampler(Image original) {
         originalImage = original;
-        allocator = MemoryAllocator.getInstance();
+        allocator = IntMemoryAllocator.getInstance();
         //originalRGB = original.getRGB(0, 0, original.getWidth(), original.getHeight(), null, 0, original.getWidth());
     }
 

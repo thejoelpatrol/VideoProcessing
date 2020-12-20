@@ -6,23 +6,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MemoryAllocator {
+public class IntMemoryAllocator {
     /**
      * Extremely simplified pool of exact-sized byte arrays. Not a super smart heap implementation.
      * But managing these same-sized arrays ourselves instead of relying on the JVM
      * heap to constantly create and destroy them can save GC overhead. This only makes sense
      * to use in a case where we know we'd create excessive garbage otherwise.
      */
-    private static MemoryAllocator singleton;
+    private static IntMemoryAllocator singleton;
     private Map<Integer, List<int[]>> pool;
 
-    private MemoryAllocator() {
+    private IntMemoryAllocator() {
         pool = new HashMap<>();
     }
 
-    public static MemoryAllocator getInstance() {
+    public static IntMemoryAllocator getInstance() {
         if (singleton == null) {
-            singleton = new MemoryAllocator();
+            singleton = new IntMemoryAllocator();
         }
         return singleton;
     }

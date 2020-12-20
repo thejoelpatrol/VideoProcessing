@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.BitShifter;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
@@ -8,10 +9,12 @@ import com.laserscorpion.VideoProcessing.Pixel;
 public class BitShifter implements ImageFilter{
     int shift;
     boolean downsample;
+    ByteMemoryAllocator allocator;
 
     public BitShifter(int shift, boolean downsample) {
         this.shift = shift;
         this.downsample = downsample;
+        allocator = ByteMemoryAllocator.getInstance();
     }
 
     @Override
@@ -23,7 +26,7 @@ public class BitShifter implements ImageFilter{
         } else
             toProcess = image;
 
-        byte[] rgbResult = new byte[3 * toProcess.width * toProcess.height];
+        byte[] rgbResult = allocator.malloc(3 * toProcess.width * toProcess.height);
         for (int y = 0; y < toProcess.height; y++) {
             for (int x = 0; x < toProcess.width; x++) {
                 int i = 3 * (x + y*toProcess.width);
@@ -34,6 +37,7 @@ public class BitShifter implements ImageFilter{
             }
         }
         image.replaceRGB(rgbResult);
+        allocator.free(rgbResult);
         return image;
     }
 

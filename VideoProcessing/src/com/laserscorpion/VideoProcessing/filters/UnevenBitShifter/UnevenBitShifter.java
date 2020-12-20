@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.UnevenBitShifter;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.ColorDownsampler;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
@@ -10,12 +11,14 @@ public class UnevenBitShifter implements ImageFilter{
     int gshift;
     int bshift;
     boolean downsample;
+    ByteMemoryAllocator allocator;
 
     public UnevenBitShifter(int rshift, int gshift, int bshift, boolean downsample) {
         this.rshift = rshift;
         this.gshift = gshift;
         this.bshift = bshift;
         this.downsample = downsample;
+        allocator = ByteMemoryAllocator.getInstance();
     }
 
     @Override
@@ -27,7 +30,7 @@ public class UnevenBitShifter implements ImageFilter{
         } else
             toProcess = image;
 
-        byte[] rgbResult = new byte[3 * toProcess.width * toProcess.height];
+        byte[] rgbResult = allocator.malloc(3 * toProcess.width * toProcess.height);// new byte[3 * toProcess.width * toProcess.height];
         for (int y = 0; y < toProcess.height; y++) {
             for (int x = 0; x < toProcess.width; x++) {
                 int i = 3 * (x + y*toProcess.width);
@@ -38,6 +41,7 @@ public class UnevenBitShifter implements ImageFilter{
             }
         }
         image.replaceRGB(rgbResult);
+        allocator.free(rgbResult);
         return image;
     }
 
