@@ -10,6 +10,8 @@ import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
+import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifter;
+import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifterFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +52,13 @@ public class VideoMultiProcessor {
                 String filterArgs[] = args[i + 1].split(" ");
                 int shift = Integer.parseInt(filterArgs[0]);
                 BitShifterFactory factory = new BitShifterFactory(shift, false);
+                factories.add(factory);
+            } else if (filterName.equals("UnevenBitShifter")) {
+                String filterArgs[] = args[i + 1].split(" ");
+                int rshift = Integer.parseInt(filterArgs[0]);
+                int gshift = Integer.parseInt(filterArgs[1]);
+                int bshift = Integer.parseInt(filterArgs[2]);
+                UnevenBitShifterFactory factory = new UnevenBitShifterFactory(rshift, gshift, bshift, false);
                 factories.add(factory);
             } else if (filterName.equals("ImageCipher")) {
                 String filterArgs[] = args[i + 1].split(" ");
@@ -95,6 +104,7 @@ public class VideoMultiProcessor {
         System.err.println("Available filters:");
         System.err.println("--SampleShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double\"");
         System.err.println("--BitShifter shift-int");
+        System.err.println("--UnevenBitShifter rshift-int gshift-int bshift-int");
         System.err.println("--ImageCipher downsample-boolean");
         System.err.println("--OtherByteShifter offset-per-frame-int");
         System.err.println("--RGBHSV none");
