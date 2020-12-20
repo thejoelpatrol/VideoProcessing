@@ -4,13 +4,13 @@ import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
 import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.ChillerShuffler.ChillerShufflerFactory;
 import com.laserscorpion.VideoProcessing.filters.ImageCipher.VideoCipherFactory;
+import com.laserscorpion.VideoProcessing.filters.IntReverse.IntReverseFactory;
 import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.PNGEncoder.PNGEncoderFactory;
 import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
-import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifter;
 import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifterFactory;
 
 import java.util.ArrayList;
@@ -84,6 +84,8 @@ public class VideoMultiProcessor {
             } else if (filterName.equals("PNGEncoder")) {
                 PNGEncoderFactory factory = new PNGEncoderFactory();
                 factories.add(factory);
+            } else if (filterName.equals("IntReverse")) {
+                factories.add(new IntReverseFactory());
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -112,6 +114,7 @@ public class VideoMultiProcessor {
         System.err.println("--ChillerShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double everyNthFrame\"");
         System.err.println("--PNGEncoder none");
         System.err.println("--ReverseAdder none");
+        System.err.println("--IntReverse none");
         System.exit(1);
     }
 }
