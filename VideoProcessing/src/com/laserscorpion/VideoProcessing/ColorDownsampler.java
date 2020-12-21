@@ -76,6 +76,9 @@ public class ColorDownsampler {
         int[][] colorTriples = convertRGBToTriples();
 
         int[] topXcolors = medianCut(colorTriples, topColorCount);
+        for (int[] triple : colorTriples) {
+            allocator.free(triple);
+        }
 
         Pixel[] topColors = new Pixel[topXcolors.length];
         for (int i = 0; i < topXcolors.length; i++) {
@@ -93,7 +96,7 @@ public class ColorDownsampler {
         for (int i = 0; i < originalImage.pixels.length; i++) {
             for (int j = 0; j < originalImage.pixels[i].length; j++) {
                 int index = j + i*originalImage.pixels[i].length;
-                colorTriples[index] = new int[3];
+                colorTriples[index] = allocator.malloc(3);//new int[3];
                 Pixel pixel = originalImage.pixels[i][j];
                 colorTriples[index][0] = pixel.r;
                 colorTriples[index][1] = pixel.g;
@@ -112,7 +115,7 @@ public class ColorDownsampler {
     private int[] medianCut(int[][] RGBTriples, int desiredColors) {
         if (desiredColors == 1) {
             int average = averageColor(RGBTriples);
-            int[] result = new int[1];
+            int[] result = allocator.malloc(1);
             result[0] = average;
             return result;
         }

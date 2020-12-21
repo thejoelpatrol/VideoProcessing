@@ -88,7 +88,9 @@ public class VideoMultiProcessor {
             } else if (filterName.equals("IntReverse")) {
                 factories.add(new IntReverseFactory());
             } else if (filterName.equals("QuadMirror")) {
-                factories.add(new QuadMirrorFactory());
+                String filterArgs[] = args[i + 1].split(" ");
+                boolean downsample = Boolean.parseBoolean(filterArgs[0]);
+                factories.add(new QuadMirrorFactory(downsample));
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -118,7 +120,7 @@ public class VideoMultiProcessor {
         System.err.println("--PNGEncoder none");
         System.err.println("--ReverseAdder none");
         System.err.println("--IntReverse none");
-        System.err.println("--QuadMirror none");
+        System.err.println("--QuadMirror downsample-boolean");
         System.exit(1);
     }
 }

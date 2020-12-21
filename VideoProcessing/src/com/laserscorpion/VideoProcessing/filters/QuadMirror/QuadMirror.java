@@ -7,21 +7,23 @@ import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
 
 public class QuadMirror implements ImageFilter{
+    boolean downsample;
     ByteMemoryAllocator allocator;
 
-    public QuadMirror() {
+
+    public QuadMirror(boolean downsample) {
+        this.downsample = downsample;
         allocator = ByteMemoryAllocator.getInstance();
     }
 
     @Override
     public Image processImage(Image image, int frameNo) {
         Image toProcess;
-        /*if (downsample) {
+        if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(image);
-            toProcess = sampler.downsample(16);
+            toProcess = sampler.downsample(4096);
         } else
-            toProcess = image;*/
-        toProcess = image;
+            toProcess = image;
 
         byte[] rgbResult = allocator.malloc(3 * toProcess.width * toProcess.height);
         for (int y = 0; y < toProcess.height; y++) {
