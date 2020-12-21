@@ -21,6 +21,7 @@ public class ImageWorkerThread extends Thread {
     protected BlockingQueue<PPMFile> queue; // this queue only ever has max one thing in it, but it's good for synchronization
     protected Queue<PPMFile> scratchImages;
     protected ImageFilter[] filters;
+    protected ByteMemoryAllocator byteMemoryAllocator;
     protected int currentFrameNo;
 
     /**
@@ -32,6 +33,7 @@ public class ImageWorkerThread extends Thread {
         queue = new ArrayBlockingQueue<PPMFile>(1);
         this.filters = filters;
         this.scratchImages = scratchImages;
+        this.byteMemoryAllocator = ByteMemoryAllocator.getInstance();
     }
 
     @Override
@@ -51,7 +53,7 @@ public class ImageWorkerThread extends Thread {
                 image = filters[i].processImage(image, currentFrameNo);
             }
             finishImage();
-            //scratchImages.add(ppm);
+            scratchImages.add(ppm);
             ppm = null;
             imageReady.release();
         }
@@ -76,7 +78,7 @@ public class ImageWorkerThread extends Thread {
         finishedImage.width = image.width;
         finishedImage.height = image.height;
         finishedImage.maxVal = 255;
-        finishedImage.data = new byte[finishedImage.width * finishedImage.height * 3];
+        finishedImage.data = byteMemoryAllocator.malloc(finishedImage.width * finishedImage.height * 3);//new byte[finishedImage.width * finishedImage.height * 3];
         for (int i = 0; i < finishedImage.height; i++) {
             for (int j = 0; j < finishedImage.width; j++) {
                 Pixel pixel = image.pixels[i][j];
