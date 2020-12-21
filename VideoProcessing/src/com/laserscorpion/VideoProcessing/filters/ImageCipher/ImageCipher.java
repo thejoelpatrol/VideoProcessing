@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.ImageCipher;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.Image;
 
 import java.awt.image.BufferedImage;
@@ -47,6 +48,7 @@ public class ImageCipher {
     public Image encryptImageData(Image clearText) {
         byte[] cleartextBytes = clearText.toRGBArray();
         byte[] encryptedBytes = encryptBytes(cleartextBytes);
+        ByteMemoryAllocator.getInstance().free(cleartextBytes);
         Image ciphertext = clearText;
         ciphertext.replaceRGB(encryptedBytes);  // in fact we are also replacing the cleartext
         return ciphertext;                      // but conceptually we want to return the ciphertext...

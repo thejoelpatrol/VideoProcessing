@@ -99,8 +99,13 @@ public class Image {
         return result;
     }
 
+    /**
+     * For performance, you should ByteMemoryAllocator.free() the returned array
+     * @return
+     */
     public byte[] toRGBArray() {
-        byte[] rgbResult = new byte[3 * width * height];
+        ByteMemoryAllocator allocator = ByteMemoryAllocator.getInstance();
+        byte[] rgbResult = allocator.malloc(3 * width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Pixel pixel = pixels[y][x];

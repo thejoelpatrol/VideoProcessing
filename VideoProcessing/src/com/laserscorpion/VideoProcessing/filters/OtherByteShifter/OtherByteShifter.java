@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.OtherByteShifter;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
@@ -35,6 +36,7 @@ public class OtherByteShifter implements ImageFilter {
 
         rgbResult[0] = (byte)0xFF; // why?
         image.replaceRGB(rgbResult);
+        ByteMemoryAllocator.getInstance().free(rgbResult);
         return image;
     }
 }

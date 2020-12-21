@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing.filters.ReverseAdder;
 
+import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
@@ -23,6 +24,7 @@ public class ReverseAdder implements ImageFilter {
             rgbResult[i] += rgbResult[j];
         }
         image.replaceRGB(rgbResult);
+        ByteMemoryAllocator.getInstance().free(rgbResult);
         return image;
     }
 

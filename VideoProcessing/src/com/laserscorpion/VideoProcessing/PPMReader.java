@@ -11,11 +11,13 @@ class PPMReader extends Thread {
     private InputStream stream;
     private BlockingQueue<PPMFile> queue;
     private Queue<PPMFile> scratchImages;
+    private ByteMemoryAllocator allocator;
 
     public PPMReader(InputStream stream, BlockingQueue<PPMFile> queue, Queue<PPMFile> scratchImages) {
         this.stream = stream;
         this.queue = queue;
         this.scratchImages = scratchImages;
+        allocator = ByteMemoryAllocator.getInstance();
     }
 
     @Override
@@ -82,7 +84,7 @@ class PPMReader extends Thread {
             ppmFile = new PPMFile();
             ppmFile.width = width;
             ppmFile.height = height;
-            ppmFile.data = new byte[ppmFile.width * ppmFile.height * 3];
+            ppmFile.data = allocator.malloc(ppmFile.width * ppmFile.height * 3);
         }
 
         c = readChar(fileReader);
