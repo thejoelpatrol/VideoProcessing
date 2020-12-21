@@ -8,6 +8,7 @@ import com.laserscorpion.VideoProcessing.filters.IntReverse.IntReverseFactory;
 import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.PNGEncoder.PNGEncoderFactory;
 import com.laserscorpion.VideoProcessing.filters.PixelSorter.PixelSorterFactory;
+import com.laserscorpion.VideoProcessing.filters.QuadMirror.QuadMirrorFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
@@ -86,6 +87,8 @@ public class VideoMultiProcessor {
                 factories.add(factory);
             } else if (filterName.equals("IntReverse")) {
                 factories.add(new IntReverseFactory());
+            } else if (filterName.equals("QuadMirror")) {
+                factories.add(new QuadMirrorFactory());
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -115,6 +118,7 @@ public class VideoMultiProcessor {
         System.err.println("--PNGEncoder none");
         System.err.println("--ReverseAdder none");
         System.err.println("--IntReverse none");
+        System.err.println("--QuadMirror none");
         System.exit(1);
     }
 }
