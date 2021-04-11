@@ -16,9 +16,6 @@ WorkerManager extends Thread {
     private ImageWorkerThread workerThreads[];
     private Semaphore locks[];
     private FrameDelayService frameService;
-    private ByteMemoryAllocator byteAllocator;
-    private PixelMemoryAllocator pixelAllocator;
-    private IntMemoryAllocator intAllocator;
     private int frameNo = 0;
 
     public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories,
@@ -54,11 +51,6 @@ WorkerManager extends Thread {
         }
         if (saveFrameCache)
             this.frameService = FrameDelayService.getInstance();
-
-        byteAllocator = ByteMemoryAllocator.getInstance();
-        pixelAllocator = PixelMemoryAllocator.getInstance();
-        intAllocator = IntMemoryAllocator.getInstance();
-
     }
 
     @Override
@@ -84,11 +76,6 @@ WorkerManager extends Thread {
                 workerThreads[i].setImage(image, frameNo);
                 frameNo++;
 
-                if (frameNo % 10 == 0) {
-                    //byteAllocator.flush();
-                    //pixelAllocator.flush();
-                    //intAllocator.flush()
-                }
             }
             for (int j = 0; j < i; j++) {
                 locks[j].acquireUninterruptibly();

@@ -1,22 +1,18 @@
 package com.laserscorpion.VideoProcessing.filters.GhostDelay;
 
-import com.laserscorpion.VideoProcessing.ByteMemoryAllocator;
 import com.laserscorpion.VideoProcessing.FrameDelayService;
 import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.ImageFilter;
 import com.laserscorpion.VideoProcessing.Pixel;
-import com.laserscorpion.VideoProcessing.PixelMemoryAllocator;
 
 public class GhostDelay implements ImageFilter {
     private static final short CHANNEL_MAX = 0xFF;
     private double alpha = 0.40;
-    private PixelMemoryAllocator allocator;
     private FrameDelayService frameService;
     private int numFrames;
     private int delay;
 
     public GhostDelay(int numFrames, double alpha, int delay) {
-        allocator = PixelMemoryAllocator.getInstance();
         frameService = FrameDelayService.getInstance();
         this.numFrames = numFrames;
         this.alpha = alpha;
@@ -56,8 +52,6 @@ public class GhostDelay implements ImageFilter {
                 image.pixels[y][x].b = (short)Math.min(CHANNEL_MAX, (short)(opacity*pixel.b + alpha*image.pixels[y][x].b));
             }
         }
-        //image.replaceRGB(rgbResult);
-        //allocator.free(rgbResult);
         return image;
     }
 }
