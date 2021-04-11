@@ -6,50 +6,49 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ByteMemoryAllocator {
+public class PixelMemoryAllocator {
+    private static final int MAX_POOL_SIZE = 30;
     /**
      * Extremely simplified pool of exact-sized byte arrays. Not a super smart heap implementation.
      * But managing these same-sized arrays ourselves instead of relying on the JVM
      * heap to constantly create and destroy them can save GC overhead. This only makes sense
      * to use in a case where we know we'd create excessive garbage otherwise.
      */
-    private static final int MAX_POOL_SIZE = 30;
+    private static PixelMemoryAllocator singleton;
+    private Map<Integer, List<Pixel[]>> pool;
 
-    private static ByteMemoryAllocator singleton;
-    private Map<Integer, List<byte[]>> pool;
-
-    private ByteMemoryAllocator() {
+    private PixelMemoryAllocator() {
         pool = new HashMap<>();
     }
 
-    public static ByteMemoryAllocator getInstance() {
+    public static PixelMemoryAllocator getInstance() {
         if (singleton == null) {
-            singleton = new ByteMemoryAllocator();
+            singleton = new PixelMemoryAllocator();
         }
         return singleton;
     }
 
-    public synchronized byte[] malloc (int size) {
-        //return new byte[size];
+    public synchronized Pixel[] malloc (int size) {
+        return new Pixel[size];
 
-        List<byte[]> blocks = pool.get(size);
+        /*List<Pixel[]> blocks = pool.get(size);
         if (blocks == null || blocks.size() == 0)
-            return new byte[size];
-        byte[] block = blocks.remove(0);
-        return block;
+            return new Pixel[size];
+        Pixel[] block = blocks.remove(0);
+        return block;*/
     }
 
-    public synchronized void free(byte[] block) {
-        //return;
+    public synchronized void free(Pixel[] block) {
+        return;
 
-        List<byte[]> blocks = pool.get(block.length);
+        /*List<Pixel[]> blocks = pool.get(block.length);
         if (blocks == null) {
-            blocks = new LinkedList<byte[]>();
+            blocks = new LinkedList<Pixel[]>();
             pool.put(block.length, blocks);
         }
         if (blocks.size() > MAX_POOL_SIZE)
             return;
-        blocks.add(block);
+        blocks.add(block);*/
     }
 
     public synchronized void flush() {

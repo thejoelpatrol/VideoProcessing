@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing;
 
+import java.lang.reflect.Field;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -7,19 +8,26 @@ import java.util.concurrent.Semaphore;
 class
 WorkerManager extends Thread {
     private static final int DEFAULT_WORKERS = 3;
+    private static final int FRAME_CACHE_SIZE = 20;
     private BlockingQueue<PPMFile> work;
     private BlockingQueue<PPMFile> output;
     private int workers;
     private PPMWriter consumer;
     private ImageWorkerThread workerThreads[];
     private Semaphore locks[];
+    private FrameDelayService frameService;
+    private ByteMemoryAllocator byteAllocator;
+    private PixelMemoryAllocator pixelAllocator;
+    private IntMemoryAllocator intAllocator;
     private int frameNo = 0;
 
-    public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, ImageFilterFactory[] factories,
+                         BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
         this(work, DEFAULT_WORKERS, factories, output, scratchImages, consumer);
     }
 
-    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageFilterFactory[] factories, BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
+    public WorkerManager(BlockingQueue<PPMFile> work, int workers, ImageFilterFactory[] factories,
+                         BlockingQueue<PPMFile> output, Queue<PPMFile> scratchImages, PPMWriter consumer) {
         this.work = work;
         this.output = output;
         this.workers = workers;
@@ -35,6 +43,22 @@ WorkerManager extends Thread {
             }
             workerThreads[i] = new ImageWorkerThread(filters, locks[i], scratchImages);
         }
+
+        boolean saveFrameCache = false;
+        for (ImageFilterFactory factory : factories) {
+            Class cls = factory.getClass();
+            try {
+                Field field = cls.getField("REQUIRES_FRAMECACHE");
+                saveFrameCache = true;
+            } catch (NoSuchFieldException e) {}
+        }
+        if (saveFrameCache)
+            this.frameService = FrameDelayService.getInstance();
+
+        byteAllocator = ByteMemoryAllocator.getInstance();
+        pixelAllocator = PixelMemoryAllocator.getInstance();
+        intAllocator = IntMemoryAllocator.getInstance();
+
     }
 
     @Override
@@ -59,11 +83,24 @@ WorkerManager extends Thread {
                 }
                 workerThreads[i].setImage(image, frameNo);
                 frameNo++;
+
+                if (frameNo % 10 == 0) {
+                    //byteAllocator.flush();
+                    //pixelAllocator.flush();
+                    //intAllocator.flush()
+                }
             }
             for (int j = 0; j < i; j++) {
                 locks[j].acquireUninterruptibly();
                 locks[j].release();
                 putUninterruptibly(output, workerThreads[j].getfinishedImage());
+
+                int workerFrame = frameNo - i + j;
+                if (frameService != null) {
+                    frameService.save(workerFrame, workerThreads[j].getImage());
+                    frameService.clear(workerFrame - FRAME_CACHE_SIZE);
+                }
+
             }
         }
 

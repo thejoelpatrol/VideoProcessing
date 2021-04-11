@@ -28,18 +28,25 @@ public class IntMemoryAllocator {
     }
 
     public synchronized int[] malloc (int size) {
-        List<int[]> blocks = pool.get(size);
+        return new int[size];
+        /*List<int[]> blocks = pool.get(size);
         if (blocks == null || blocks.size() == 0)
             return new int[size];
         int[] block = blocks.remove(0);
-        return block;
+        return block;*/
     }
 
     public synchronized void free(int[] block) {
+        return;
+        /*
         List<int[]> blocks = pool.get(block.length);
         if (blocks == null)
             blocks = new LinkedList<int[]>();
         blocks.add(block);
-        pool.put(block.length, blocks);
+        pool.put(block.length, blocks);*/
+    }
+
+    public synchronized void flush() {
+        pool = new HashMap<>();
     }
 }

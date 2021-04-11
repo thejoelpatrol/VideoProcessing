@@ -3,6 +3,7 @@ import com.laserscorpion.VideoProcessing.VideoProcessor;
 import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
 import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.ChillerShuffler.ChillerShufflerFactory;
+import com.laserscorpion.VideoProcessing.filters.GhostDelay.GhostDelayFactory;
 import com.laserscorpion.VideoProcessing.filters.ImageCipher.VideoCipherFactory;
 import com.laserscorpion.VideoProcessing.filters.IntReverse.IntReverseFactory;
 import com.laserscorpion.VideoProcessing.filters.OtherByteShifter.OtherByteShiftFactory;
@@ -91,6 +92,11 @@ public class VideoMultiProcessor {
                 String filterArgs[] = args[i + 1].split(" ");
                 boolean downsample = Boolean.parseBoolean(filterArgs[0]);
                 factories.add(new QuadMirrorFactory(downsample));
+            } else if (filterName.equals("GhostDelay")) {
+                String filterArgs[] = args[i + 1].split(" ");
+                int numFrames = Integer.parseInt(filterArgs[0]);
+                double alpha = Double.parseDouble(filterArgs[1]);
+                factories.add(new GhostDelayFactory(numFrames, alpha, workers));
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -121,6 +127,7 @@ public class VideoMultiProcessor {
         System.err.println("--ReverseAdder none");
         System.err.println("--IntReverse none");
         System.err.println("--QuadMirror downsample-boolean");
+        System.err.println("--GhostDelay numFrames-int alpha-double");
         System.exit(1);
     }
 }

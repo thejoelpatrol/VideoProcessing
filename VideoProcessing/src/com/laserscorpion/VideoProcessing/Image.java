@@ -6,6 +6,7 @@ import java.util.Arrays;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Image {
+    private PixelMemoryAllocator allocator;
     public Pixel[][] pixels;
     public int height;
     public int width;
@@ -14,8 +15,9 @@ public class Image {
         this.height = height;
         this.width = width;
         pixels = new Pixel[height][];
+        allocator = PixelMemoryAllocator.getInstance();
         for (int i = 0; i < height; i++) {
-            pixels[i] = new Pixel[width];
+            pixels[i] = allocator.malloc(width);//new Pixel[width];
             for (int j = 0; j < width; j++) {
                 int k = 3*(j + i*width);
                 Pixel p = new Pixel();
@@ -29,8 +31,9 @@ public class Image {
 
     public Image(Pixel[] pixels, int height, int width) {
         this.pixels = new Pixel[height][];
+        allocator = PixelMemoryAllocator.getInstance();
         for (int i = 0; i < height; i++) {
-            this.pixels[i] = new Pixel[width];
+            this.pixels[i] = allocator.malloc(width);//new Pixel[width];
             for (int j = 0; j < width; j++) {
                 this.pixels[i][j] = pixels[j + i*width];
             }
@@ -43,13 +46,14 @@ public class Image {
         height = copy.height;
         width = copy.width;
         pixels = new Pixel[height][width];
+        allocator = PixelMemoryAllocator.getInstance();
         for (int i = 0; i < height; i++) {
             pixels[i] = copyOf(copy.pixels[i]);
         }
     }
 
     private Pixel[] copyOf(Pixel[] pixels) {
-        Pixel[] result = new Pixel[pixels.length];
+        Pixel[] result =  allocator.malloc(pixels.length);//;new Pixel[pixels.length];
         for (int i = 0; i < pixels.length; i++) {
             result[i] = pixels[i].copyOf();
         }
@@ -73,7 +77,7 @@ public class Image {
         this.width = image.getWidth();
         pixels = new Pixel[height][];
         for (int i = 0; i < height; i++) {
-            pixels[i] = new Pixel[width];
+            pixels[i] = allocator.malloc(width);;//new Pixel[width];
             for (int j = 0; j < width; j++) {
                 int k = j + i*width;
                 Pixel p = new Pixel();

@@ -53,7 +53,7 @@ public class ImageWorkerThread extends Thread {
                 image = filters[i].processImage(image, currentFrameNo);
             }
             finishImage();
-            scratchImages.add(ppm);
+            //scratchImages.add(ppm); // don't reenable this
             ppm = null;
             imageReady.release();
         }
@@ -105,5 +105,9 @@ public class ImageWorkerThread extends Thread {
         }
 
         return finishedImage;
+    }
+
+    public Image getImage() {
+        return new Image(image);
     }
 }

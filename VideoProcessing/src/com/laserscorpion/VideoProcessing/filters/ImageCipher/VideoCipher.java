@@ -20,6 +20,7 @@ public class VideoCipher implements ImageFilter {
         if (downsample) {
             ColorDownsampler sampler = new ColorDownsampler(image);
             toProcess = sampler.downsample(COLORS);
+            //image.dispose();
         }
         ImageCipher cipher = new ImageCipher();
         return cipher.encryptImageData(toProcess);
