@@ -13,6 +13,7 @@ public class VideoProcessor {
     private static String ffmpegArgs = "-f image2pipe -vcodec ppm pipe:1";
     private static final String ffmpegScale = "-vf scale=2*iw:2*ih";
     private static final String ffmpegOutputArgs = "-framerate 30 -i pipe:0 -c:v libx264 -r 30 -crf 25 -pix_fmt yuv420p";
+    private static final String ffmpegNvidiaOutputArgs = "-framerate 30 -i pipe:0 -c:v h264_nvenc -rc:v vbr_hq -cq:v 19 -maxrate:v 30M -profile:v 2 -r 30 -pix_fmt yuv420p";
     protected int QUEUE_SIZE = 100;
 
     private BlockingQueue<PPMFile> images;
@@ -54,7 +55,8 @@ public class VideoProcessor {
 
         ArrayList<String> outArgsList = new ArrayList<>();
         outArgsList.add("ffmpeg");
-        outArgsList.addAll(Arrays.asList(ffmpegOutputArgs.split(" ")));
+        //outArgsList.addAll(Arrays.asList(ffmpegOutputArgs.split(" ")));
+        outArgsList.addAll(Arrays.asList(ffmpegNvidiaOutputArgs.split(" ")));
         outArgsList.add(inputFilepath + "_" + new Date().getTime() + "_" + argString + ".mp4");
         String[] outArgs = new String[outArgsList.size()];
         outArgs = outArgsList.toArray(outArgs);
