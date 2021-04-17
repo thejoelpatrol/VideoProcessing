@@ -74,7 +74,7 @@ class PPMWriter extends Thread {
     }
 
     private PPMFile takeAlmostUninterruptibly() {
-        while (keepWaiting) {
+        while (keepWaiting || images.size() > 0) {
             try {
                 return images.take();
             } catch (InterruptedException e) {}
