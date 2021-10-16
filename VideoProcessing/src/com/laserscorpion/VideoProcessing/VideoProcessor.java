@@ -1,6 +1,7 @@
 package com.laserscorpion.VideoProcessing;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,8 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VideoProcessor {
     private static String ffmpegArgs = "-f image2pipe -vcodec ppm pipe:1";
     private static final String ffmpegScale = "-vf scale=2*iw:2*ih";
-    private static final String ffmpegOutputArgs = "-framerate 30 -i pipe:0 -c:v libx264 -r 30 -crf 25 -pix_fmt yuv420p";
-    private static final String ffmpegNvidiaOutputArgs = "-framerate 30 -i pipe:0 -c:v h264_nvenc -rc:v vbr_hq -cq:v 19 -maxrate:v 30M -profile:v 2 -r 30 -pix_fmt yuv420p";
+
     protected int QUEUE_SIZE = 100;
 
     private BlockingQueue<PPMFile> images;
@@ -27,15 +27,12 @@ public class VideoProcessor {
 
     private WorkerManager manager;
     private ProcessBuilder inputFfmpeg;
-    private ProcessBuilder outputFfmpeg;
+    private ProcessBuilder outputs[];
     Process input;
-    Process output;
+    Process outputProcesses[];
 
-    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString, int workers) {
-        this(inputFilepath, factories, argString, workers, false);
-    }
-
-    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString, int workers, boolean scale2x) {
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString,
+                          int workers, VideoParameters encodeParams) {
         this.workers = workers;
         this.factories = factories;
 
@@ -43,61 +40,91 @@ public class VideoProcessor {
         outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         scratchFiles = new ConcurrentLinkedQueue<>();
 
+        outputs = new ProcessBuilder[(encodeParams.ffplay ? 1 : 0) +
+                (encodeParams.x264 ? 1 : 0) +
+                (encodeParams.nvenc ? 1 : 0)];
+        outputProcesses = new Process[outputs.length];
+
         ArrayList<String> inArgsList = new ArrayList<>();
         inArgsList.add("ffmpeg");
         inArgsList.add("-i");
         inArgsList.add(inputFilepath);
-        if (scale2x)
+        if (encodeParams.scale2x)
             inArgsList.addAll(Arrays.asList(ffmpegScale.split(" ")));
         inArgsList.addAll(Arrays.asList(ffmpegArgs.split(" ")));
+
         String[] inArgs = new String[inArgsList.size()];
         inArgs = inArgsList.toArray(inArgs);
-
-        ArrayList<String> outArgsList = new ArrayList<>();
-        outArgsList.add("ffmpeg");
-        //outArgsList.addAll(Arrays.asList(ffmpegOutputArgs.split(" ")));
-        outArgsList.addAll(Arrays.asList(ffmpegNvidiaOutputArgs.split(" ")));
-        outArgsList.add(inputFilepath + "_" + new Date().getTime() + "_" + argString + ".mp4");
-        String[] outArgs = new String[outArgsList.size()];
-        outArgs = outArgsList.toArray(outArgs);
-
         System.out.println("Going to run " + Arrays.toString(inArgs));
-        System.out.println("Going to run " + Arrays.toString(outArgs));
-
         inputFfmpeg = new ProcessBuilder(inArgs);
         inputFfmpeg.redirectError(ProcessBuilder.Redirect.INHERIT);
-        outputFfmpeg = new ProcessBuilder(outArgs);
-        outputFfmpeg.redirectError(ProcessBuilder.Redirect.INHERIT);
+
+        int nOutput = 0;
+        if (encodeParams.ffplay) {
+            String[] ffplayArgs = {"ffplay", "-i", "pipe:0"};
+            outputs[nOutput] = new ProcessBuilder(ffplayArgs);
+            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
+            System.out.println("Going to run " + Arrays.toString(ffplayArgs));
+            nOutput++;
+        }
+        if (encodeParams.x264) {
+            String outfileName = inputFilepath + "_" + new Date().getTime() + "_" +
+                    argString + "_x264-" + encodeParams.x264crf + ".mp4";
+            String[] x264Args = {"ffmpeg","-framerate", "30", "-i", "pipe:0", "-c:v", "libx264",
+                    "-r", "30", "-crf", Integer.toString(encodeParams.x264crf), "-pix_fmt", "yuv420p",
+                    outfileName};
+            outputs[nOutput] = new ProcessBuilder(x264Args);
+            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
+            System.out.println("Going to run " + Arrays.toString(x264Args));
+            nOutput++;
+        }
+        if (encodeParams.nvenc) {
+            String outfileName = inputFilepath + "_" + new Date().getTime() + "_" +
+                    argString + "_nvenc-" + encodeParams.nvenc + "M" + ".mp4";
+            String[] nvencArgs = {"ffmpeg","-framerate", "30", "-i", "pipe:0", "-c:v", "h264_nvenc",
+                    "-rc:v", "vbr_hq", "-cq:v", "19",
+                    "-maxrate:v", Integer.toString(encodeParams.nvencMaxrate) + "M",
+                    "-profile:v", "2", "-r", "30", "-pix_fmt", "yuv420p", outfileName };
+            outputs[nOutput] = new ProcessBuilder(nvencArgs);
+            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
+            System.out.println("Going to run " + Arrays.toString(nvencArgs));
+            nOutput++;
+        }
     }
 
     public void start() {
+        ArrayList<OutputStream> outputStreams = new ArrayList<>();
         try {
             input = inputFfmpeg.start();
-            output = outputFfmpeg.start();
+            for (int i = 0; i < outputs.length; i++) {
+                outputProcesses[i] = outputs[i].start();
+                outputStreams.add(outputProcesses[i].getOutputStream());
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
         }
 
         reader = new PPMReader(input.getInputStream(), images, scratchFiles);
-        encoder = new PPMWriter(outputImages, output.getOutputStream(), scratchFiles);
+        encoder = new PPMWriter(outputImages, outputStreams, scratchFiles);
         manager = new WorkerManager(images, workers, factories, outputImages, scratchFiles, encoder);
 
         reader.start();
         manager.start();
         encoder.start();
-        waitForChild();
+        waitForChildren();
     }
 
-    private void waitForChild() {
+    private void waitForChildren() {
         while (true) {
             try {
-                output.waitFor();
+                for (Process p : outputProcesses) {
+                    p.waitFor();
+                }
                 return;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
-
 }

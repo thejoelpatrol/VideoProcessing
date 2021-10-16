@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
@@ -13,16 +14,15 @@ class PPMWriter extends Thread {
     private Queue<PPMFile> scratchImages;
     private boolean keepWaiting = true;
 //    private String outputDir;
-    private OutputStream output;
+    private List<OutputStream> outputs;
     byte[] magic = new String("P6\n").getBytes(StandardCharsets.US_ASCII);
     byte[] widthHeight;
     byte[] maxVal = new String("255\n").getBytes(StandardCharsets.US_ASCII);
     private int frame = 0;
 
-
-    public PPMWriter(BlockingQueue<PPMFile> images, OutputStream output, Queue<PPMFile> scratchImages) {
+    public PPMWriter(BlockingQueue<PPMFile> images, List<OutputStream> outputs, Queue<PPMFile> scratchImages) {
         this.images = images;
-        this.output = output;
+        this.outputs = outputs;
         this.scratchImages = scratchImages;
         /*this.outputDir = outputDir + '/' + new Date().getTime() + '/';
         File f = new File(this.outputDir);
@@ -43,7 +43,9 @@ class PPMWriter extends Thread {
         }
         System.err.println("done encoding");
         try {
-            output.close();
+            for (OutputStream output : outputs) {
+                output.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("This is going to freeze.");
@@ -57,10 +59,12 @@ class PPMWriter extends Thread {
             widthHeight = new String(image.width + " " + image.height + '\n').getBytes(StandardCharsets.US_ASCII);
 
         try {
-            output.write(magic);
-            output.write(widthHeight);
-            output.write(maxVal);
-            output.write(image.data);
+            for (OutputStream output : outputs) {
+                output.write(magic);
+                output.write(widthHeight);
+                output.write(maxVal);
+                output.write(image.data);
+            }
             if (frame % 500 == 0)
                 System.err.println(new Date().toString() + ": saved frame " + frame);
         } catch (IOException e) {
