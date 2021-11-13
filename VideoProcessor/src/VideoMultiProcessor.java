@@ -1,5 +1,5 @@
 import com.laserscorpion.VideoProcessing.ImageFilterFactory;
-import com.laserscorpion.VideoProcessing.VideoParameters;
+import com.laserscorpion.VideoProcessing.OutputProcessFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
 import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
@@ -25,9 +25,11 @@ public class VideoMultiProcessor {
         if (args.length < 5)
             printUsageAndExit();
 
-        boolean ffplay = false, x264 = false, nvenc = false;
+        boolean ffplay = false, x264 = false, nvenc = false, tcp = false, udp = false;
         int x264crf = -1;
         int nvencMaxrate = -1;
+        int tcpPort = -1;
+        int udpPort = -1;
         String infile = args[0];
         int workers = Integer.parseInt(args[1]);
         boolean scale2x = Boolean.parseBoolean(args[2]);
@@ -48,6 +50,14 @@ public class VideoMultiProcessor {
             } else if (filterName.equals("nvenc")) {
                 nvenc = true;
                 nvencMaxrate = Integer.parseInt(args[i + 1]);
+                i++;
+            } else if (filterName.equals("tcp")) {
+                tcp = true;
+                tcpPort = Integer.parseInt(args[i + 1]);
+                i++;
+            } else if (filterName.equals("udp")) {
+                udp = true;
+                udpPort = Integer.parseInt(args[i + 1]);
                 i++;
             } else if (filterName.equals("SampleShuffler")) {
                 String filterArgs[] = args[i + 1].split(" ");
@@ -128,8 +138,8 @@ public class VideoMultiProcessor {
             System.err.println("No filters specified");
             printUsageAndExit();
         }
-        if (!(ffplay || x264 || nvenc)) {
-            System.err.println("No output specified");
+        if (!(ffplay || x264 || nvenc || tcp || udp)) {
+            System.err.println("No output specified; use one of {ffplay, x264, nvenc, tcp, udp}");
             printUsageAndExit();
         }
 
@@ -137,9 +147,10 @@ public class VideoMultiProcessor {
         for (int i = 0; i < factories.size(); i++) {
             factoriesArray[i] = factories.get(i);
         }
-        VideoParameters encodeParams = new VideoParameters(scale2x, ffplay, x264, nvenc, x264crf, nvencMaxrate);
         String argString = String.join("_", Arrays.copyOfRange(args, 1, args.length));
-        VideoProcessor processor = new VideoProcessor(infile, factoriesArray, argString, workers, encodeParams);
+        OutputProcessFactory outputProcessFactory = new OutputProcessFactory(infile, argString, ffplay, x264, nvenc, tcp, udp, x264crf, nvencMaxrate, tcpPort, udpPort);
+
+        VideoProcessor processor = new VideoProcessor(infile, factoriesArray, workers, scale2x, outputProcessFactory);
         processor.start();
     }
 

@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -27,12 +28,12 @@ public class VideoProcessor {
 
     private WorkerManager manager;
     private ProcessBuilder inputFfmpeg;
-    private ProcessBuilder outputs[];
+    private List<ProcessBuilder> outputs;
     Process input;
     Process outputProcesses[];
 
-    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories, String argString,
-                          int workers, VideoParameters encodeParams) {
+    public VideoProcessor(String inputFilepath, ImageFilterFactory[] factories,
+                          int workers, boolean scale2x, OutputProcessFactory outputProcessFactory) {
         this.workers = workers;
         this.factories = factories;
 
@@ -40,16 +41,14 @@ public class VideoProcessor {
         outputImages = new LinkedBlockingQueue<>(QUEUE_SIZE);
         scratchFiles = new ConcurrentLinkedQueue<>();
 
-        outputs = new ProcessBuilder[(encodeParams.ffplay ? 1 : 0) +
-                (encodeParams.x264 ? 1 : 0) +
-                (encodeParams.nvenc ? 1 : 0)];
-        outputProcesses = new Process[outputs.length];
+        outputs = outputProcessFactory.createProcesses();
+        outputProcesses = new Process[outputs.size()];
 
         ArrayList<String> inArgsList = new ArrayList<>();
         inArgsList.add("ffmpeg");
         inArgsList.add("-i");
         inArgsList.add(inputFilepath);
-        if (encodeParams.scale2x)
+        if (scale2x)
             inArgsList.addAll(Arrays.asList(ffmpegScale.split(" ")));
         inArgsList.addAll(Arrays.asList(ffmpegArgs.split(" ")));
 
@@ -59,45 +58,15 @@ public class VideoProcessor {
         inputFfmpeg = new ProcessBuilder(inArgs);
         inputFfmpeg.redirectError(ProcessBuilder.Redirect.INHERIT);
 
-        int nOutput = 0;
-        if (encodeParams.ffplay) {
-            String[] ffplayArgs = {"ffplay", "-i", "pipe:0"};
-            outputs[nOutput] = new ProcessBuilder(ffplayArgs);
-            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
-            System.out.println("Going to run " + Arrays.toString(ffplayArgs));
-            nOutput++;
-        }
-        if (encodeParams.x264) {
-            String outfileName = inputFilepath + "_" + new Date().getTime() + "_" +
-                    argString + "_x264-" + encodeParams.x264crf + ".mp4";
-            String[] x264Args = {"ffmpeg","-framerate", "30", "-i", "pipe:0", "-c:v", "libx264",
-                    "-r", "30", "-crf", Integer.toString(encodeParams.x264crf), "-pix_fmt", "yuv420p",
-                    outfileName};
-            outputs[nOutput] = new ProcessBuilder(x264Args);
-            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
-            System.out.println("Going to run " + Arrays.toString(x264Args));
-            nOutput++;
-        }
-        if (encodeParams.nvenc) {
-            String outfileName = inputFilepath + "_" + new Date().getTime() + "_" +
-                    argString + "_nvenc-" + encodeParams.nvenc + "M" + ".mp4";
-            String[] nvencArgs = {"ffmpeg","-framerate", "30", "-i", "pipe:0", "-c:v", "h264_nvenc",
-                    "-rc:v", "vbr_hq", "-cq:v", "19",
-                    "-maxrate:v", Integer.toString(encodeParams.nvencMaxrate) + "M",
-                    "-profile:v", "2", "-r", "30", "-pix_fmt", "yuv420p", outfileName };
-            outputs[nOutput] = new ProcessBuilder(nvencArgs);
-            outputs[nOutput].redirectError(ProcessBuilder.Redirect.INHERIT);
-            System.out.println("Going to run " + Arrays.toString(nvencArgs));
-            nOutput++;
-        }
+
     }
 
     public void start() {
         ArrayList<OutputStream> outputStreams = new ArrayList<>();
         try {
             input = inputFfmpeg.start();
-            for (int i = 0; i < outputs.length; i++) {
-                outputProcesses[i] = outputs[i].start();
+            for (int i = 0; i < outputs.size(); i++) {
+                outputProcesses[i] = outputs.get(i).start();
                 outputStreams.add(outputProcesses[i].getOutputStream());
             }
         } catch (IOException e) {
