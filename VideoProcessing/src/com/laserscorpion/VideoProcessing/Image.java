@@ -1,5 +1,6 @@
 package com.laserscorpion.VideoProcessing;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -45,6 +46,15 @@ public class Image {
         pixels = new Pixel[height][width];
         for (int i = 0; i < height; i++) {
             pixels[i] = copyOf(copy.pixels[i]);
+        }
+    }
+
+    public Image(int height, int width) {
+        this.height = height;
+        this.width = width;
+        this.pixels = new Pixel[height][];
+        for (int i = 0; i < height; i++) {
+            this.pixels[i] = new Pixel[width];
         }
     }
 
@@ -134,4 +144,65 @@ public class Image {
         return (short)((short)0x00FF & (short)b);
     }
 
+    public void blend(Image top, BlendMode mode) {
+        switch (mode) {
+            case FLATTEN:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        if (!top.pixels[i][j].is_transparent()) {
+                            pixels[i][j] = top.pixels[i][j].copyOf();
+                        }
+                    }
+                }
+                break;
+            case ADD:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        pixels[i][j].r = (short)((pixels[i][j].r + top.pixels[i][j].r) & 0x00FF);
+                        pixels[i][j].g = (short)((pixels[i][j].g + top.pixels[i][j].g) & 0x00FF);
+                        pixels[i][j].b = (short)((pixels[i][j].b + top.pixels[i][j].b) & 0x00FF);
+                    }
+                }
+                break;
+            case DIFFERENCE:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        pixels[i][j].r = (short)((pixels[i][j].r - top.pixels[i][j].r) & 0x00FF);
+                        pixels[i][j].g = (short)((pixels[i][j].g - top.pixels[i][j].g) & 0x00FF);
+                        pixels[i][j].b = (short)((pixels[i][j].b - top.pixels[i][j].b) & 0x00FF);
+                    }
+                }
+                break;
+            case LIGHTER_COLOR:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        float hsvBottom[] = Color.RGBtoHSB(pixels[i][j].r, pixels[i][j].b, pixels[i][j].b, null);
+                        float hsvTop[] = Color.RGBtoHSB(top.pixels[i][j].r, top.pixels[i][j].b, top.pixels[i][j].b, null);
+                        if (hsvTop[2] > hsvBottom[2]) {
+                            pixels[i][j] = top.pixels[i][j].copyOf();
+                        }
+                    }
+                }
+                break;
+            case DARKER_COLOR:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        float hsvBottom[] = Color.RGBtoHSB(pixels[i][j].r, pixels[i][j].b, pixels[i][j].b, null);
+                        float hsvTop[] = Color.RGBtoHSB(top.pixels[i][j].r, top.pixels[i][j].b, top.pixels[i][j].b, null);
+                        if (hsvTop[2] < hsvBottom[2]) {
+                            pixels[i][j] = top.pixels[i][j].copyOf();
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    public enum BlendMode {
+        FLATTEN,
+        ADD,
+        DIFFERENCE,
+        LIGHTER_COLOR,
+        DARKER_COLOR
+    }
 }

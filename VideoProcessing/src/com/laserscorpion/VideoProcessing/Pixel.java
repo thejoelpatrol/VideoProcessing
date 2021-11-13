@@ -5,15 +5,31 @@ public class Pixel {
     public short g;
     public short b;
 
+    public Pixel() { }
+
+    public Pixel(short r, short g, short b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    public Pixel(boolean transparent) {
+        if (transparent) {
+            r = (short)0xFFFF;
+            g = (short)0xFFFF;
+            b = (short)0xFFFF;
+        }
+    }
+
+    public boolean is_transparent() {
+        return r == (short)0xFFFF && g == (short)0xFFFF && b == (short)0xFFFF;
+    }
+
     public int toInt() {
         return ((r << 16) & 0xFF0000) | ((g << 8) & 0x00FF00) | (b & 0xFF);
     }
 
     public Pixel copyOf() {
-        Pixel p = new Pixel();
-        p.r = r;
-        p.g = g;
-        p.b = b;
-        return p;
+        return new Pixel(r, g, b);
     }
 }

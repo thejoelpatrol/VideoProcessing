@@ -2,6 +2,7 @@ import com.laserscorpion.VideoProcessing.ImageFilterFactory;
 import com.laserscorpion.VideoProcessing.OutputProcessFactory;
 import com.laserscorpion.VideoProcessing.VideoProcessor;
 import com.laserscorpion.VideoProcessing.filters.BitShifter.BitShifterFactory;
+import com.laserscorpion.VideoProcessing.filters.BoxTest.BoxTestFactory;
 import com.laserscorpion.VideoProcessing.filters.ByteShifter.ByteShiftFactory;
 import com.laserscorpion.VideoProcessing.filters.ChillerShuffler.ChillerShufflerFactory;
 import com.laserscorpion.VideoProcessing.filters.GhostDelay.GhostDelayFactory;
@@ -129,6 +130,8 @@ public class VideoMultiProcessor {
                 double alpha = Double.parseDouble(filterArgs[1]);
                 factories.add(new GhostDelayFactory(numFrames, alpha, workers));
                 i++;
+            } else if (filterName.equals("BoxTest")) {
+                factories.add(new BoxTestFactory(100, 100, 100, 100));
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
