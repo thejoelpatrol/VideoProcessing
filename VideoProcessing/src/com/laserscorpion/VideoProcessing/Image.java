@@ -164,18 +164,28 @@ public class Image {
                     }
                 }
                 break;
+            case SUBTRACT:
             case DIFFERENCE:
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
-                        pixels[i][j].r = (short)((pixels[i][j].r - top.pixels[i][j].r) & 0x00FF);
-                        pixels[i][j].g = (short)((pixels[i][j].g - top.pixels[i][j].g) & 0x00FF);
-                        pixels[i][j].b = (short)((pixels[i][j].b - top.pixels[i][j].b) & 0x00FF);
+                        if (top.pixels[i][j].is_transparent())
+                            continue;
+                        //if (i == 190 && j==220)
+                         //   System.out.println("hello");
+                        if (top.pixels[i][j].r != 0)
+                            pixels[i][j].r = (short)(((byte)top.pixels[i][j].r - (byte)pixels[i][j].r) & 0x00FF);
+                        if (top.pixels[i][j].g != 0)
+                            pixels[i][j].g = (short)(((byte)top.pixels[i][j].g - (byte)pixels[i][j].g) & 0x00FF);
+                        if (top.pixels[i][j].b != 0)
+                            pixels[i][j].b = (short)(((byte)top.pixels[i][j].b - (byte)pixels[i][j].b) & 0x00FF);
                     }
                 }
                 break;
             case LIGHTER_COLOR:
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
+                        if (top.pixels[i][j].is_transparent())
+                            continue;
                         float hsvBottom[] = Color.RGBtoHSB(pixels[i][j].r, pixels[i][j].b, pixels[i][j].b, null);
                         float hsvTop[] = Color.RGBtoHSB(top.pixels[i][j].r, top.pixels[i][j].b, top.pixels[i][j].b, null);
                         if (hsvTop[2] > hsvBottom[2]) {
@@ -187,6 +197,8 @@ public class Image {
             case DARKER_COLOR:
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
+                        if (top.pixels[i][j].is_transparent())
+                            continue;
                         float hsvBottom[] = Color.RGBtoHSB(pixels[i][j].r, pixels[i][j].b, pixels[i][j].b, null);
                         float hsvTop[] = Color.RGBtoHSB(top.pixels[i][j].r, top.pixels[i][j].b, top.pixels[i][j].b, null);
                         if (hsvTop[2] < hsvBottom[2]) {
@@ -201,6 +213,7 @@ public class Image {
     public enum BlendMode {
         FLATTEN,
         ADD,
+        SUBTRACT,
         DIFFERENCE,
         LIGHTER_COLOR,
         DARKER_COLOR
