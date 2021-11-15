@@ -4,9 +4,14 @@ import com.laserscorpion.VideoProcessing.Image;
 import com.laserscorpion.VideoProcessing.Pixel;
 
 public class Graphics {
-    private Image canvas;
+    public int height;
+    public int width;
+    protected Image canvas;
 
     public Graphics(int height, int width) {
+        this.height = height;
+        this.width = width;
+
         Pixel transparent[] = new Pixel[width * height];
         Pixel p = new Pixel(true);
 
@@ -18,6 +23,17 @@ public class Graphics {
 
     public Image getImage() {
         return canvas;
+    }
+
+    public void place(Graphics other, int x, int y) {
+        int xEnd = Math.min(width - x, other.width);
+        int yEnd = Math.min(height - y, other.height);
+        for (int i = 0; i < yEnd; i++) {
+            for (int j = 0; j < xEnd; j++) {
+                if (!other.canvas.pixels[i][j].is_transparent())
+                    canvas.pixels[y + i][x + j] = other.canvas.pixels[i][j].copyOf();
+            }
+        }
     }
 
     public void background(Pixel color) {
@@ -127,6 +143,7 @@ public class Graphics {
         /**
          * https://stackoverflow.com/a/2049593/2753454
          */
+        Pixel c = color.copyOf();
         int xMin = Math.min(Math.min(x0, x1), x2);
         int xMax = Math.max(Math.max(x0, x1), x2);
         int yMin = Math.min(Math.min(y0, y1), y2);
@@ -134,7 +151,7 @@ public class Graphics {
         for (int y = yMin; y < yMax; y++) {
             for (int x = xMin; x < xMax; x++) {
                 if (pointInTriangle(x, y, x0, y0, x1, y1, x2, y2)) {
-                    canvas.pixels[y][x] = color;
+                    canvas.pixels[y][x] = c;
                 }
             }
         }

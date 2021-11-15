@@ -15,10 +15,12 @@ import com.laserscorpion.VideoProcessing.filters.QuadMirror.QuadMirrorFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
+import com.laserscorpion.VideoProcessing.filters.TriGrid.TriGridFactory;
 import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifterFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class VideoMultiProcessor {
 
@@ -132,6 +134,25 @@ public class VideoMultiProcessor {
                 i++;
             } else if (filterName.equals("BoxTest")) {
                 factories.add(new BoxTestFactory(100, 100, 100, 100));
+            } else if (filterName.equals("TriGrid")) {
+                //factories.add(new TriGridFactory(8, 12, 25));
+                //factories.add(new TriGridFactory(4, 6, 25));
+                //factories.add(new TriGridFactory(2, 3, new Date().getTime()));
+                String filterArgs[] = args[i + 1].split(" ");
+                int rows = Integer.parseInt(filterArgs[0]);
+                int cols = Integer.parseInt(filterArgs[1]);
+                long seed = Long.parseLong(filterArgs[2]);
+                if (seed == 0)
+                    seed = new Date().getTime();
+                System.err.println("TriGrid seed " + seed);
+                int[] colorShares = new int[4];
+                colorShares[0] =  Integer.parseInt(filterArgs[3]);
+                colorShares[1] =  Integer.parseInt(filterArgs[4]);
+                colorShares[2]  =  Integer.parseInt(filterArgs[5]);
+                colorShares[3] =  Integer.parseInt(filterArgs[6]);
+                double triangleProb = Double.parseDouble(filterArgs[7]);
+                factories.add(new TriGridFactory(rows, cols, seed, colorShares, triangleProb));
+                i++;
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
@@ -142,7 +163,7 @@ public class VideoMultiProcessor {
             printUsageAndExit();
         }
         if (!(ffplay || x264 || nvenc || tcp || udp)) {
-            System.err.println("No output specified; use one of {ffplay, x264, nvenc, tcp, udp}");
+            System.err.println("No output specified; use at least one of {ffplay, x264, nvenc, tcp, udp}");
             printUsageAndExit();
         }
 

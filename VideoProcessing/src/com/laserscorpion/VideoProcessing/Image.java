@@ -158,6 +158,8 @@ public class Image {
             case ADD:
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
+                        if (top.pixels[i][j].is_transparent())
+                            continue;
                         pixels[i][j].r = (short)((pixels[i][j].r + top.pixels[i][j].r) & 0x00FF);
                         pixels[i][j].g = (short)((pixels[i][j].g + top.pixels[i][j].g) & 0x00FF);
                         pixels[i][j].b = (short)((pixels[i][j].b + top.pixels[i][j].b) & 0x00FF);
