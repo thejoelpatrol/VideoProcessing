@@ -15,6 +15,7 @@ import com.laserscorpion.VideoProcessing.filters.QuadMirror.QuadMirrorFactory;
 import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
+import com.laserscorpion.VideoProcessing.filters.DelaunayTri.DelaunayTriangulationFactory;
 import com.laserscorpion.VideoProcessing.filters.TriGrid.TriGridFactory;
 import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifterFactory;
 
@@ -153,6 +154,13 @@ public class VideoMultiProcessor {
                 double triangleProb = Double.parseDouble(filterArgs[7]);
                 factories.add(new TriGridFactory(rows, cols, seed, colorShares, triangleProb));
                 i++;
+            } else if (filterName.equals("DelaunayTri")) {
+                int[] colorShares = new int[4];
+                colorShares[0] =  0;
+                colorShares[1] =  2;
+                colorShares[2]  =  2;
+                colorShares[3]  =  2;
+                factories.add(new DelaunayTriangulationFactory(25, 20, colorShares));
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();

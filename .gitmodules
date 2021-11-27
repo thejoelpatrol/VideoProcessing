@@ -1,3 +1,6 @@
 [submodule "pypng"]
 	path = pypng
 	url = https://github.com/thejoelpatrol/pypng
+[submodule "delaunay-triangulator"]
+	path = delaunay-triangulator
+	url = https://github.com/jdiemke/delaunay-triangulator
