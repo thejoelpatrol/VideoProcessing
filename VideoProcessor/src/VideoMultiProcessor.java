@@ -16,6 +16,7 @@ import com.laserscorpion.VideoProcessing.filters.RGBHSV.HSVFactory;
 import com.laserscorpion.VideoProcessing.filters.ReverseAdder.ReverseAdderFactory;
 import com.laserscorpion.VideoProcessing.filters.SampleShuffler.SampleShufflerFactory;
 import com.laserscorpion.VideoProcessing.filters.DelaunayTri.DelaunayTriangulationFactory;
+import com.laserscorpion.VideoProcessing.filters.SpliceReverser.SpliceReverserFactory;
 import com.laserscorpion.VideoProcessing.filters.TriGrid.TriGridFactory;
 import com.laserscorpion.VideoProcessing.filters.UnevenBitShifter.UnevenBitShifterFactory;
 
@@ -161,6 +162,12 @@ public class VideoMultiProcessor {
                 colorShares[2]  =  2;
                 colorShares[3]  =  2;
                 factories.add(new DelaunayTriangulationFactory(25, 20, colorShares));
+            } else if (filterName.equals("SpliceReverse")) {
+                boolean red = args[i + 1].contains("r");
+                boolean green = args[i + 1].contains("g");
+                boolean blue = args[i + 1].contains("b");
+                factories.add(new SpliceReverserFactory(red, green, blue));
+                i++;
             } else {
                 System.err.println("Just what filter do you think you're trying to use? " + filterName + "?");
                 printUsageAndExit();
