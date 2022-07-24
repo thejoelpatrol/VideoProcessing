@@ -35,6 +35,7 @@ public class VideoMultiProcessor {
         int nvencMaxrate = -1;
         int tcpPort = -1;
         int udpPort = -1;
+        String hostname = "";
         String infile = args[0];
         int workers = Integer.parseInt(args[1]);
         boolean scale2x = Boolean.parseBoolean(args[2]);
@@ -57,8 +58,10 @@ public class VideoMultiProcessor {
                 nvencMaxrate = Integer.parseInt(args[i + 1]);
                 i++;
             } else if (filterName.equals("tcp")) {
+                String filterArgs[] = args[i + 1].split(" ");
                 tcp = true;
-                tcpPort = Integer.parseInt(args[i + 1]);
+                hostname = filterArgs[0];
+                tcpPort = Integer.parseInt(filterArgs[1]);
                 i++;
             } else if (filterName.equals("udp")) {
                 udp = true;
@@ -187,7 +190,7 @@ public class VideoMultiProcessor {
             factoriesArray[i] = factories.get(i);
         }
         String argString = String.join("_", Arrays.copyOfRange(args, 1, args.length));
-        OutputProcessFactory outputProcessFactory = new OutputProcessFactory(infile, argString, ffplay, x264, nvenc, tcp, udp, x264crf, nvencMaxrate, tcpPort, udpPort);
+        OutputProcessFactory outputProcessFactory = new OutputProcessFactory(infile, argString, ffplay, x264, nvenc, tcp, udp, x264crf, nvencMaxrate, hostname, tcpPort, udpPort);
 
         VideoProcessor processor = new VideoProcessor(infile, factoriesArray, workers, scale2x, outputProcessFactory);
         processor.start();

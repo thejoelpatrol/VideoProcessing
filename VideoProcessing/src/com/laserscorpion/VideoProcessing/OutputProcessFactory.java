@@ -16,12 +16,13 @@ public class OutputProcessFactory {
     private boolean udp;
     private int x264crf;
     private int nvencMaxrate;
+    String hostname;
     private int tcpPort;
     private int udpPort;
 
     public OutputProcessFactory(String inputPath, String args, boolean ffplay, boolean x264,
                                 boolean nvenc, boolean tcp, boolean udp, int x264crf, int nvencMaxrate, 
-                                int tcpPort, int udpPort) {
+                                String hostname, int tcpPort, int udpPort) {
         this.inputPath = inputPath;
         this.args = args;
         this.ffplay = ffplay;
@@ -29,6 +30,7 @@ public class OutputProcessFactory {
         this.nvenc = nvenc;
         this.x264crf = x264crf;
         this.nvencMaxrate = nvencMaxrate;
+        this.hostname = hostname;
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.udp = udp;
@@ -70,7 +72,7 @@ public class OutputProcessFactory {
         if (tcp) {
             String[] tcpArgs = {"ffmpeg","-r", "30", "-i", "pipe:0", "-c:v", "libx264",
                     "-framerate", "30", "-crf", "15", "-pix_fmt", "yuv420p",
-                    "-f", "mpegts", "tcp://localhost:" + tcpPort};
+                    "-f", "mpegts", "tcp://" + hostname + ":" + tcpPort};
             ProcessBuilder builder = new ProcessBuilder(tcpArgs);
             builder.redirectError(ProcessBuilder.Redirect.INHERIT);
             outputs.add(builder);
