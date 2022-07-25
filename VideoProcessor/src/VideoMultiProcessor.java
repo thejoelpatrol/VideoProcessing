@@ -26,7 +26,7 @@ import java.util.Date;
 
 public class VideoMultiProcessor {
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
         if (args.length < 5)
             printUsageAndExit();
 
@@ -64,8 +64,10 @@ public class VideoMultiProcessor {
                 tcpPort = Integer.parseInt(filterArgs[1]);
                 i++;
             } else if (filterName.equals("udp")) {
+                String filterArgs[] = args[i + 1].split(" ");
                 udp = true;
-                udpPort = Integer.parseInt(args[i + 1]);
+                hostname = filterArgs[0];
+                udpPort = Integer.parseInt(filterArgs[1]);
                 i++;
             } else if (filterName.equals("SampleShuffler")) {
                 String filterArgs[] = args[i + 1].split(" ");
@@ -197,7 +199,7 @@ public class VideoMultiProcessor {
     }
 
     private static void printUsageAndExit() {
-        System.err.println("Usage: $ java -jar VideoMultiProcessor.jar video-filepath threads-int scale2x-boolean [--ffplay] [--x264 crf] [--nvenc maxrate] --Filter \"filter args\" [--MoreFilters \"filter args\"]");
+        System.err.println("Usage: $ java -jar VideoMultiProcessor.jar video-filepath threads-int scale2x-boolean [--ffplay] [--x264 crf] [--nvenc maxrate] [--tcp \"hostname port\"] [--udp \"hostname port\"] --Filter \"filter args\" [--MoreFilters \"filter args\"]");
         System.err.println("Available filters:");
         System.err.println("--SampleShuffler \"samples-int snap-boolean max-sample-height-int glitch-probability-double\"");
         System.err.println("--BitShifter shift-int");
