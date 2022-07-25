@@ -142,9 +142,6 @@ public class VideoMultiProcessor {
             } else if (filterName.equals("BoxTest")) {
                 factories.add(new BoxTestFactory(100, 100, 100, 100));
             } else if (filterName.equals("TriGrid")) {
-                //factories.add(new TriGridFactory(8, 12, 25));
-                //factories.add(new TriGridFactory(4, 6, 25));
-                //factories.add(new TriGridFactory(2, 3, new Date().getTime()));
                 String filterArgs[] = args[i + 1].split(" ");
                 int rows = Integer.parseInt(filterArgs[0]);
                 int cols = Integer.parseInt(filterArgs[1]);
